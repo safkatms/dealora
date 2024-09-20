@@ -1,13 +1,7 @@
 # Visual Studio Files
 .vs/
-*.suo
-*.user
-*.userosscache
-*.sln.docstates
 
 # ASP.NET-specific directories
-bin/
-obj/
 App_Data/
 
 # NuGet packages
