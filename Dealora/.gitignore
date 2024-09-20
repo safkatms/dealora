@@ -1,0 +1,19 @@
+# Visual Studio Files
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# ASP.NET-specific directories
+bin/
+obj/
+App_Data/
+
+# NuGet packages
+*.nupkg
+packages/
+
+# User-specific files
+*.log
+*.DS_Store
