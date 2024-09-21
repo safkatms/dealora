@@ -18,6 +18,10 @@ namespace Dealora.Controllers
         // GET: User
         public ActionResult Index()
         {
+            //if (Session["username"] == null)
+            //{
+            //    return RedirectToAction("Index", "Home");
+            //}
             return View(db.Users.ToList());
         }
 
