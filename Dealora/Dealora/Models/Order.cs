@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Dealora.Models
 {
@@ -16,14 +15,32 @@ namespace Dealora.Models
     public class Order
     {
         public int Id { get; set; }
-        public int CustomerId { get; set; }  // Foreign key for User (Customer)
+
+        [ForeignKey("User")]
+        [Required(ErrorMessage = "User ID is required")]
+        public int UserId { get; set; }  // Foreign key for User (Customer)
+
+        [Required(ErrorMessage = "Order Date is required")]
         public DateTime OrderDate { get; set; }
+
+        [Required(ErrorMessage = "Total Amount is required")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Total Amount must be greater than 0")]
         public double TotalAmount { get; set; }
+
+        [Required(ErrorMessage = "Order Status is required")]
         public OrderStatus Status { get; set; }
-        public int ShippingAddressId { get; set; }  // Foreign key for Address
+
+        [ForeignKey("Address")]
+        [Required(ErrorMessage = "Address ID is required")]
+        public int AddressId { get; set; }  // Foreign key for Address
+
+        [Required(ErrorMessage = "Payment Method is required")]
         public PaymentMethod PaymentMethod { get; set; }
+
         public virtual User User { get; set; }
         public virtual Address Address { get; set; }
+
+        // Default constructor
         public Order()
         {
             OrderDate = DateTime.Now;
