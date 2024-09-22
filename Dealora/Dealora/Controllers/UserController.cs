@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
 using Dealora.Context;
@@ -15,14 +16,27 @@ namespace Dealora.Controllers
     {
         private DealoraDbContext db = new DealoraDbContext();
 
+        private HttpClient client;
+
+        public UserController()
+        {
+            this.client = new HttpClient();
+        }
+
         // GET: User
         public ActionResult Index()
         {
-            //if (Session["username"] == null)
-            //{
-            //    return RedirectToAction("Index", "Home");
-            //}
-            return View(db.Users.ToList());
+            client.BaseAddress = new Uri(@"http://localhost:3082/api/users");
+            var response = client.GetAsync("users");
+            response.Wait();
+
+            if (response.Result.IsSuccessStatusCode)
+            {
+                var data = response.Result.Content.ReadAsAsync<IEnumerable<User>>().Result;
+                return View(data);
+            }
+            else
+                return HttpNotFound();
         }
 
         // GET: User/Details/5
@@ -41,27 +55,37 @@ namespace Dealora.Controllers
         }
 
         // GET: User/Create
-        public ActionResult Create()
+        public ActionResult SignUp()
         {
             return View();
         }
 
-        // POST: User/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Email,Password,PhoneNumber,Role,DateCreated,IsActive")] User user)
+        public ActionResult SignUp(User user)
         {
+            // Check if the email is already registered
+            if (db.Users.Any(u => u.Email == user.Email))
+            {
+                ModelState.AddModelError("Email", "Email is already registered.");
+            }
+
             if (ModelState.IsValid)
             {
-                db.Users.Add(user);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                client.BaseAddress = new Uri(@"http://localhost:3082/api/users/signup");
+                var response = client.PostAsJsonAsync("signup", user);
+                response.Wait();
+
+                if (response.Result.IsSuccessStatusCode)
+                    return RedirectToAction("Index");
+                else
+                    return HttpNotFound();
             }
 
             return View(user);
         }
+
 
         // GET: User/Edit/5
         public ActionResult Edit(int? id)
