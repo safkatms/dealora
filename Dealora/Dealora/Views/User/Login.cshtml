@@ -1,0 +1,73 @@
+﻿@model Dealora.Models.User
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <section class="">
+        <!-- Jumbotron -->
+        <div class="px-4 py-5 px-md-5 text-center text-lg-start" style="background-color: hsl(0, 0%, 96%)">
+            <div class="container">
+                <div class="row gx-lg-5 align-items-center">
+                    <div class="col-lg-6 mb-5 mb-lg-0">
+                        <h1 class="my-5 display-3 fw-bold ls-tight">
+                            The best offer <br />
+                            <span class="text-primary">for your business</span>
+                        </h1>
+                        <p style="color: hsl(217, 10%, 50.8%)">
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                            Eveniet, itaque accusantium odio, soluta, corrupti aliquam
+                            quibusdam tempora at cupiditate quis eum maiores libero
+                            veritatis? Dicta facilis sint aliquid ipsum atque?
+                        </p>
+                    </div>
+
+                    <div class="col-lg-6 mb-5 mb-lg-0">
+                        <div class="card">
+                            <div class="card-body py-5 px-md-5">
+
+                                <!-- Email input -->
+                                <div class="form-outline mb-4">
+                                    @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "" })
+                                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                                </div>
+
+                                <div class="form-outline mb-4">
+                                    @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "" })
+                                    @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control form-control", id = "password", type = "password" } })
+                                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                                </div>
+
+                                <!-- Show Password Checkbox -->
+                                <div class="form-check d-flex mb-4">
+                                    <input class="form-check-input me-2" type="checkbox" id="showPasswordCheckbox" onclick="document.getElementById('password').type = this.checked ? 'text' : 'password'; document.getElementById('confirmPassword').type = this.checked ? 'text' : 'password';" />
+                                    <label class="form-check-label" for="showPasswordCheckbox">
+                                        Show Password
+                                    </label>
+                                </div>
+
+                                <!-- Submit button -->
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-lg btn-primary" type="submit">Login</button>
+                                </div>
+                                <hr />
+                                <!-- Register buttons -->
+                                <div class="text-center">
+                                    <p>Don't have an account:</p>
+                                    <div class="d-grid gap-2">
+                                        @Html.ActionLink("Sign Up", "SignUp", "User", null, new { @class = "btn btn-lg btn-primary btn-block" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Jumbotron -->
+    </section>
+}
+
+
+

@@ -9,27 +9,34 @@ using System.Data.Entity;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity.Infrastructure;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using System.Text;
+using System.Web.Configuration;
+using System;
+using System.IdentityModel.Tokens.Jwt; // For JwtSecurityToken, JwtSecurityTokenHandler
+using Microsoft.IdentityModel.Tokens;  // For SymmetricSecurityKey, SigningCredentials, SecurityAlgorithms
+using System.Security.Claims;          // For Claim, ClaimTypes
+using System.Text;                     // For Encoding
+
 
 namespace Dealora.Controllers
 {
     public class UsersController : ApiController
     {
 
-        public string HashPassword(string password)
-        {
-            var passwordHasher = new PasswordHasher<object>();
-            // Generate the hashed password
-            return passwordHasher.HashPassword(null, password);
-        }
+        //public string HashPassword(string password)
+        //{
+        //    var passwordHasher = new PasswordHasher<object>();
+        //    return passwordHasher.HashPassword(null, password);
+        //}
 
-        public bool VerifyPassword(string hashedPassword, string enteredPassword)
-        {
-            var passwordHasher = new PasswordHasher<object>();
-            // Compare the entered password with the stored hashed password
-            var result = passwordHasher.VerifyHashedPassword(null, hashedPassword, enteredPassword);
+        //public bool VerifyPassword(string hashedPassword, string enteredPassword)
+        //{
+        //    var passwordHasher = new PasswordHasher<object>();
+        //    var result = passwordHasher.VerifyHashedPassword(null, hashedPassword, enteredPassword);
 
-            return result == PasswordVerificationResult.Success;
-        }
+        //    return result == PasswordVerificationResult.Success;
+        //}
 
 
 
@@ -60,7 +67,7 @@ namespace Dealora.Controllers
         [ResponseType(typeof(User))]
         public IHttpActionResult SignUp(User user)
         {
-            // Validate the model state
+           
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -69,14 +76,13 @@ namespace Dealora.Controllers
             // Check if the email is already registered
             if (db.Users.Any(u => u.Email == user.Email))
             {
-                return Conflict(); // Email already exists
+                return Conflict();
             }
 
 
             //// Hash the password
-            //user.Password = HashPassword(user.Password); // Implement this
+            //user.Password = HashPassword(user.Password); 
 
-            // Add the user to the database
             db.Users.Add(user);
             db.SaveChanges();
 
@@ -87,24 +93,66 @@ namespace Dealora.Controllers
         // POST: api/Users/Login
         [HttpPost]
         [Route("api/Users/Login")]
-        public IHttpActionResult Login([FromBody] LoginModel loginModel)
+        public IHttpActionResult Login(User loginModel)
         {
-            if (!ModelState.IsValid)
+            if (loginModel == null || string.IsNullOrEmpty(loginModel.Email) || string.IsNullOrEmpty(loginModel.Password))
             {
-                return BadRequest(ModelState);
+                return BadRequest("Invalid user credentials.");
             }
 
-            // Check if the user exists and password matches
-            var user = db.Users.FirstOrDefault(u => u.Email == loginModel.Email);
-            if (user == null || !VerifyPassword(loginModel.Password, user.Password)) // Implement VerifyPassword
+            // Retrieve the user from the database based on the email
+            var user = db.Users.FirstOrDefault(x => x.Email == loginModel.Email && x.Password == loginModel.Password);
+
+            if (user == null)
             {
-                return Unauthorized(); // Invalid credentials
+                return Unauthorized();  // Invalid email or password
             }
 
-            // If valid credentials, generate token or session
-            // Example: return Ok(new { token = GenerateToken(user), User = user });
-            return Ok(new { message = "Login successful", user });
+            // Generate a JWT Token
+            var token = GenerateJwtToken(user);
+
+            return Ok(new
+            {
+                token = token,
+                userDetails = new
+                {
+                    user.FirstName,
+                    user.LastName,
+                    user.Email,
+                    Role = user.Role.ToString()
+                }
+            });
         }
+
+        // Method to generate JWT token
+        // Method to generate JWT token
+        private string GenerateJwtToken(User user)
+        {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Your_Secret_Key_Must_Be_32_Chars_Long"));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            // Create claims for the token
+            var claims = new[]
+            {
+        new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+        new Claim(ClaimTypes.Role, user.Role.ToString()), // Add role claim
+        new Claim(ClaimTypes.Name, user.FirstName + " " + user.LastName),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // Token ID
+    };
+
+            // Generate the token
+            var token = new JwtSecurityToken(
+                issuer: "yourdomain.com",
+                audience: "yourdomain.com",
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(30),
+                signingCredentials: credentials
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+
 
         // PUT: api/Users/5
         [ResponseType(typeof(void))]

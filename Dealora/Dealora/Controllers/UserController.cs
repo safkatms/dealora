@@ -86,6 +86,10 @@ namespace Dealora.Controllers
             return View(user);
         }
 
+        public ActionResult Login()
+        {
+            return View();
+        }
 
         // GET: User/Edit/5
         public ActionResult Edit(int? id)
