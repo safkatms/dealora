@@ -21,8 +21,8 @@ namespace Dealora.Controllers.API
         }
 
         // GET: Products
-        [Route("api/products")]
         [HttpGet]
+        [Route("api/products")]
         public IEnumerable<Product> GetProducts()
         {
             return _dbContext.Products.ToList();
