@@ -1,57 +1,29 @@
 ﻿using Dealora.Context;
 using Dealora.Models;
+using Dealora.Models.ViewModel;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
+using System.Text;
 using System.Web.Http;
 using System.Web.Http.Description;
-using System.Data.Entity;
-using System.ComponentModel.DataAnnotations;
-using System.Data.Entity.Infrastructure;
-using Microsoft.AspNetCore.Identity;
 
-namespace Dealora.Controllers
+namespace Dealora.Controllers.API
 {
     public class UsersController : ApiController
     {
+        private DealoraAppDbContext db = new DealoraAppDbContext();
 
-        public string HashPassword(string password)
-        {
-            var passwordHasher = new PasswordHasher<object>();
-            // Generate the hashed password
-            return passwordHasher.HashPassword(null, password);
-        }
-
-        public bool VerifyPassword(string hashedPassword, string enteredPassword)
-        {
-            var passwordHasher = new PasswordHasher<object>();
-            // Compare the entered password with the stored hashed password
-            var result = passwordHasher.VerifyHashedPassword(null, hashedPassword, enteredPassword);
-
-            return result == PasswordVerificationResult.Success;
-        }
-
-
-
-        private DealoraDbContext db = new DealoraDbContext();
 
         // GET: api/Users
         public IQueryable<User> GetUsers()
         {
             return db.Users;
-        }
-
-        // GET: api/Users/5
-        [ResponseType(typeof(User))]
-        public IHttpActionResult GetUser(int id)
-        {
-            User user = db.Users.Find(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(user);
         }
 
         // POST: api/Users/Signup
@@ -60,7 +32,7 @@ namespace Dealora.Controllers
         [ResponseType(typeof(User))]
         public IHttpActionResult SignUp(User user)
         {
-            // Validate the model state
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -69,14 +41,13 @@ namespace Dealora.Controllers
             // Check if the email is already registered
             if (db.Users.Any(u => u.Email == user.Email))
             {
-                return Conflict(); // Email already exists
+                return Conflict();
             }
 
 
             //// Hash the password
-            //user.Password = HashPassword(user.Password); // Implement this
+            //user.Password = HashPassword(user.Password); 
 
-            // Add the user to the database
             db.Users.Add(user);
             db.SaveChanges();
 
@@ -84,103 +55,40 @@ namespace Dealora.Controllers
         }
 
 
-        // POST: api/Users/Login
         [HttpPost]
         [Route("api/Users/Login")]
-        public IHttpActionResult Login([FromBody] LoginModel loginModel)
+        public IHttpActionResult Login([FromBody] LoginModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            var user = db.Users.SingleOrDefault(u => u.Email == model.Email && u.Password == model.Password);
 
-            // Check if the user exists and password matches
-            var user = db.Users.FirstOrDefault(u => u.Email == loginModel.Email);
-            if (user == null || !VerifyPassword(loginModel.Password, user.Password)) // Implement VerifyPassword
-            {
-                return Unauthorized(); // Invalid credentials
-            }
+            if (user == null) return Unauthorized();
 
-            // If valid credentials, generate token or session
-            // Example: return Ok(new { token = GenerateToken(user), User = user });
-            return Ok(new { message = "Login successful", user });
+            var token = GenerateJwtToken(user);
+            return Ok(new { token });
         }
 
-        // PUT: api/Users/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutUser(int id, User user)
+        private string GenerateJwtToken(User user)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            var key = Encoding.UTF8.GetBytes("your-very-long-secret-key-of-at-least-32-characters");
 
-            if (id != user.Id)
+            var claims = new[]
             {
-                return BadRequest();
-            }
+                new Claim(JwtRegisteredClaimNames.Name, user.FirstName),
+                new Claim(JwtRegisteredClaimNames.FamilyName, user.LastName),
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
 
-            db.Entry(user).State = EntityState.Modified;
+            var token = new JwtSecurityToken(
+                expires: DateTime.UtcNow.AddHours(1),
+                claims: claims,
+                signingCredentials: new SigningCredentials(
+                    new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha256)
+            );
 
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        // DELETE: api/Users/5
-        [ResponseType(typeof(User))]
-        public IHttpActionResult DeleteUser(int id)
-        {
-            User user = db.Users.Find(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            db.Users.Remove(user);
-            db.SaveChanges();
-
-            return Ok(user);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
-        private bool UserExists(int id)
-        {
-            return db.Users.Count(e => e.Id == id) > 0;
-        }
-
-    }
-
-    // Model to handle login request
-    public class LoginModel
-    {
-        [Required(ErrorMessage = "Email is required")]
-        [EmailAddress(ErrorMessage = "Invalid Email Address")]
-        public string Email { get; set; }
-
-        [Required(ErrorMessage = "Password is required")]
-        public string Password { get; set; }
     }
 }

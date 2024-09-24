@@ -1,78 +1,102 @@
 ﻿@model Dealora.Models.User
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
-<div class="container">
-    <h4>Sign Up</h4>
-    <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    <div class="form-group">
-        @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
-        </div>
-    </div>
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
-        </div>
-    </div>
+<section class="">
+    <!-- Jumbotron -->
+    <div class="px-4 py-5 px-md-5 text-center text-lg-start" style="background-color: hsl(0, 0%, 96%)">
+        <div class="container">
+            <div class="row gx-lg-5 align-items-center">
+                <div class="col-lg-6 mb-5 mb-lg-0">
+                    <h1 class="my-5 display-3 fw-bold ls-tight">
+                        Your gateway <br />
+                        <span class="text-primary">to smarter shopping</span>
+                    </h1>
+                    <p style="color: hsl(217, 10%, 50.8%)">
+                        At Dealora, we connect you with the best deals from trusted sellers. Whether you’re looking for the latest gadgets, trendy fashion, or everyday essentials, we’ve got you covered. Join thousands of satisfied shoppers and experience a marketplace where quality meets value.
+                    </p>
+                </div>
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
-        </div>
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(model => model.PhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
-        </div>
-    </div>
+                <div class="col-lg-5 mb-5 mb-lg-0">
+                    <div class="card">
+                        <div class="card-body py-5 px-md-5 border border-1 border-primary rounded">
+                            <!-- 2 column grid layout with text inputs for the first and last names -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-outline border-1">
+                                        @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "" })
+                                        @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control border-2" } })
+                                        @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div  class="form-outline">
+                                        @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "" })
+                                        @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control border-2" } })
+                                        @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
-        </div>
-    </div>
+                            <!-- Email input -->
+                            <div class="form-outline ">
+                                @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "" })
+                                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control border-2" } })
+                                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                            </div>
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
-        </div>
-    </div>
+                            <!-- Password input -->
+                            <div  class="form-outline">
+                                @Html.LabelFor(model => model.PhoneNumber, htmlAttributes: new { @class = "" })
+                                @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control border-2" } })
+                                @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+                            </div>
 
+                            <!-- Password input -->
+                            <div  class="form-outline">
+                                @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "" })
+                                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control border-2", id = "password", type = "password" } })
+                                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                            </div>
 
+                            <!-- Confirm Password input -->
+                            <div class="form-outline">
+                                @Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { @class = "" })
+                                @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control border-2", id = "confirmPassword", type = "password" } })
+                                @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+                            </div>
 
-    @*<div class="form-group">
-            @Html.LabelFor(model => model.Role, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EnumDropDownListFor(model => model.Role, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Role, "", new { @class = "text-danger" })
+                            <!-- Show Password Checkbox -->
+                            <div class="form-check d-flex mb-4">
+                                <input class="form-check-input me-2 border-2" type="checkbox" id="showPasswordCheckbox" onclick="document.getElementById('password').type = this.checked ? 'text' : 'password'; document.getElementById('confirmPassword').type = this.checked ? 'text' : 'password';" />
+                                <label class="form-check-label" for="showPasswordCheckbox">
+                                    Show Password
+                                </label>
+                            </div>
+
+                            <!-- Submit button -->
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-lg btn-primary border border-1 border-black" type="submit">Sign Up</button>
+                            </div>
+                            <hr />
+                            <!-- Register buttons -->
+                            <div class="text-center">
+                                <p>Have an account:</p>
+                                <div class="d-grid gap-2">
+                                    @Html.ActionLink("Login", "Login", "User", null, new { @class = "btn btn-lg btn-primary btn-block border border-1 border-black" })
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>*@
-
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Sign Up" class="btn btn-primary" />
         </div>
     </div>
-</div>
+    <!-- Jumbotron -->
+</section>
 }
 
-<div>
-    @Html.ActionLink("Back to Login", "#")
-</div>
+

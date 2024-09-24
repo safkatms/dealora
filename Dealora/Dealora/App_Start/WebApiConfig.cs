@@ -9,6 +9,9 @@ namespace Dealora
     {
         public static void Register(HttpConfiguration config)
         {
+            config.SuppressDefaultHostAuthentication();
+            config.Filters.Add(new HostAuthenticationFilter("Bearer"));
+
             config.MapHttpAttributeRoutes();
 
             config.Routes.MapHttpRoute(
