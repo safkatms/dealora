@@ -1,8 +1,8 @@
 ﻿
-@if (Session["username"] != null)
+@if (Session["JWTToken"] != null)
 {
     <ul class="nav navbar-nav">
-        <li>@Html.ActionLink("Welcome " + Session["username"].ToString(), "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+        <li>@Html.ActionLink("Welcome " + Session["Firstname"].ToString(), "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
         <li>@Html.ActionLink("Logout", "Logout", "User", new { area = "" }, new { @class = "nav-link" })</li>
     </ul>
 }

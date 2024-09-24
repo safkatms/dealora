@@ -1,6 +1,11 @@
 ﻿
-@model Dealora.Models.User
-
+@model Dealora.Models.ViewModel.LoginModel
+<script>
+    setTimeout(() => {
+        const box = document.getElementById('hide');
+        box.style.display = 'none';
+    }, 3000);
+</script>
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
@@ -23,7 +28,12 @@
                     <div class="col-lg-5 mb-5 mb-lg-0">
                         <div class="card">
                             <div class="card-body py-5 px-md-5 border border-1 border-primary rounded">
-
+                                @if (TempData["Invalid"]  != null)
+                                {
+                                    <div id="hide" class="alert alert-danger">
+                                        <strong> @TempData["Invalid"]</strong>
+                                    </div>
+                                }
                                 <!-- Email input -->
                                 <div class="form-outline mb-4">
                                     @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "" })
