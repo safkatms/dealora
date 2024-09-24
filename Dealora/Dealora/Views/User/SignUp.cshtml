@@ -11,33 +11,30 @@
             <div class="row gx-lg-5 align-items-center">
                 <div class="col-lg-6 mb-5 mb-lg-0">
                     <h1 class="my-5 display-3 fw-bold ls-tight">
-                        The best offer <br />
-                        <span class="text-primary">for your business</span>
+                        Your gateway <br />
+                        <span class="text-primary">to smarter shopping</span>
                     </h1>
                     <p style="color: hsl(217, 10%, 50.8%)">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Eveniet, itaque accusantium odio, soluta, corrupti aliquam
-                        quibusdam tempora at cupiditate quis eum maiores libero
-                        veritatis? Dicta facilis sint aliquid ipsum atque?
+                        At Dealora, we connect you with the best deals from trusted sellers. Whether you’re looking for the latest gadgets, trendy fashion, or everyday essentials, we’ve got you covered. Join thousands of satisfied shoppers and experience a marketplace where quality meets value.
                     </p>
                 </div>
 
-                <div class="col-lg-6 mb-5 mb-lg-0">
+                <div class="col-lg-5 mb-5 mb-lg-0">
                     <div class="card">
-                        <div class="card-body py-5 px-md-5">
+                        <div class="card-body py-5 px-md-5 border border-1 border-primary rounded">
                             <!-- 2 column grid layout with text inputs for the first and last names -->
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="form-outline">
+                                    <div class="form-outline border-1">
                                         @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "" })
-                                        @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control border-2" } })
                                         @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div  class="form-outline">
                                         @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "" })
-                                        @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control border-2" } })
                                         @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
                                     </div>
                                 </div>
@@ -46,45 +43,34 @@
                             <!-- Email input -->
                             <div class="form-outline ">
                                 @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "" })
-                                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control border-2" } })
                                 @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
                             </div>
 
                             <!-- Password input -->
                             <div  class="form-outline">
                                 @Html.LabelFor(model => model.PhoneNumber, htmlAttributes: new { @class = "" })
-                                @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control border-2" } })
                                 @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
-                            </div>
-
-                            <div  class="form-outline">
-                                @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "" })
-                                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
-                                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
-                            </div>
-                            <div  class="form-outline">
-                                @Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { @class = "" })
-                                @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control" } })
-                                @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
                             </div>
 
                             <!-- Password input -->
                             <div  class="form-outline">
                                 @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "" })
-                                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control form-control", id = "password", type = "password" } })
+                                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control border-2", id = "password", type = "password" } })
                                 @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
                             </div>
 
                             <!-- Confirm Password input -->
                             <div class="form-outline">
                                 @Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { @class = "" })
-                                @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control form-control", id = "confirmPassword", type = "password" } })
+                                @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control border-2", id = "confirmPassword", type = "password" } })
                                 @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
                             </div>
 
                             <!-- Show Password Checkbox -->
                             <div class="form-check d-flex mb-4">
-                                <input class="form-check-input me-2" type="checkbox" id="showPasswordCheckbox" onclick="document.getElementById('password').type = this.checked ? 'text' : 'password'; document.getElementById('confirmPassword').type = this.checked ? 'text' : 'password';" />
+                                <input class="form-check-input me-2 border-2" type="checkbox" id="showPasswordCheckbox" onclick="document.getElementById('password').type = this.checked ? 'text' : 'password'; document.getElementById('confirmPassword').type = this.checked ? 'text' : 'password';" />
                                 <label class="form-check-label" for="showPasswordCheckbox">
                                     Show Password
                                 </label>
@@ -92,14 +78,14 @@
 
                             <!-- Submit button -->
                             <div class="d-grid gap-2">
-                                <button class="btn btn-lg btn-primary" type="submit">Sign Up</button>
+                                <button class="btn btn-lg btn-primary border border-1 border-black" type="submit">Sign Up</button>
                             </div>
                             <hr />
                             <!-- Register buttons -->
                             <div class="text-center">
                                 <p>Have an account:</p>
                                 <div class="d-grid gap-2">
-                                    @Html.ActionLink("Login", "Login", "User", null, new { @class = "btn btn-lg btn-primary btn-block" })
+                                    @Html.ActionLink("Login", "Login", "User", null, new { @class = "btn btn-lg btn-primary btn-block border border-1 border-black" })
                                 </div>
                             </div>
 

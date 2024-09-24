@@ -124,8 +124,6 @@ namespace Dealora.Controllers
             });
         }
 
-        // Method to generate JWT token
-        // Method to generate JWT token
         private string GenerateJwtToken(User user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Your_Secret_Key_Must_Be_32_Chars_Long"));
@@ -221,7 +219,6 @@ namespace Dealora.Controllers
 
     }
 
-    // Model to handle login request
     public class LoginModel
     {
         [Required(ErrorMessage = "Email is required")]
