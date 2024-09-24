@@ -14,7 +14,7 @@ namespace Dealora.Controllers
 {
     public class UserController : Controller
     {
-        private DealoraDbContext db = new DealoraDbContext();
+        private DealoraAppDbContext db = new DealoraAppDbContext();
 
         private HttpClient client;
 
@@ -26,7 +26,7 @@ namespace Dealora.Controllers
         // GET: User
         public ActionResult Index()
         {
-            client.BaseAddress = new Uri(@"http://localhost:3082/api/users");
+            client.BaseAddress = new Uri(@"http://localhost:9570/api/users");
             var response = client.GetAsync("users");
             response.Wait();
 
@@ -73,7 +73,7 @@ namespace Dealora.Controllers
 
             if (ModelState.IsValid)
             {
-                client.BaseAddress = new Uri(@"http://localhost:3082/api/users/signup");
+                client.BaseAddress = new Uri(@"http://localhost:9570/api/users/signup");
                 var response = client.PostAsJsonAsync("signup", user);
                 response.Wait();
 
@@ -91,70 +91,6 @@ namespace Dealora.Controllers
             return View();
         }
 
-        // GET: User/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            User user = db.Users.Find(id);
-            if (user == null)
-            {
-                return HttpNotFound();
-            }
-            return View(user);
-        }
 
-        // POST: User/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,FirstName,LastName,Email,Password,PhoneNumber,Role,DateCreated,IsActive")] User user)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(user).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(user);
-        }
-
-        // GET: User/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            User user = db.Users.Find(id);
-            if (user == null)
-            {
-                return HttpNotFound();
-            }
-            return View(user);
-        }
-
-        // POST: User/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            User user = db.Users.Find(id);
-            db.Users.Remove(user);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
     }
 }

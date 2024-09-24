@@ -1,4 +1,5 @@
-﻿@if (Session["username"] != null)
+﻿
+@if (Session["username"] != null)
 {
     <ul class="nav navbar-nav">
         <li>@Html.ActionLink("Welcome " + Session["username"].ToString(), "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>

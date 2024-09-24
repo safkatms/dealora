@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dealora", "Dealora\Dealora.csproj", "{09DA3A57-BB28-49AE-8ECF-9161DAC4D4B3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dealora", "Dealora\Dealora.csproj", "{D05614D1-DA58-450A-AB5F-A25B8FD2CE09}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{09DA3A57-BB28-49AE-8ECF-9161DAC4D4B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{09DA3A57-BB28-49AE-8ECF-9161DAC4D4B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{09DA3A57-BB28-49AE-8ECF-9161DAC4D4B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{09DA3A57-BB28-49AE-8ECF-9161DAC4D4B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D05614D1-DA58-450A-AB5F-A25B8FD2CE09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D05614D1-DA58-450A-AB5F-A25B8FD2CE09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D05614D1-DA58-450A-AB5F-A25B8FD2CE09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D05614D1-DA58-450A-AB5F-A25B8FD2CE09}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {4B2E6984-0A4A-4829-97CD-61729C63C370}
+		SolutionGuid = {4215A9FE-E8A2-4E9E-AF27-524560834299}
 	EndGlobalSection
 EndGlobal

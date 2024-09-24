@@ -5,14 +5,14 @@
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<Dealora.Context.DealoraDbContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<Dealora.Context.DealoraAppDbContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(Dealora.Context.DealoraDbContext context)
+        protected override void Seed(Dealora.Context.DealoraAppDbContext context)
         {
             //  This method will be called after migrating to the latest version.
 
