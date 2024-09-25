@@ -92,19 +92,61 @@ namespace Dealora.Controllers.API
         [Route("api/Users/ChangePassword/{id}")]
         public IHttpActionResult ChangePassword(int id, [FromBody] ChangePasswordViewModel model)
         {
+            // Check if the provided model state is valid
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
+            // Find the user in the database by their ID
             var user = db.Users.FirstOrDefault(u => u.Id == id);
 
+            // Check if the user exists
             if (user == null)
-                return NotFound();
-            if(!string.IsNullOrEmpty(model.NewPassword))
             {
-                user.Password = model.NewPassword; // Update the password
+                return NotFound(); // Return 404 if user is not found
             }
-            db.SaveChanges(); // Save changes to the database
 
-            return Ok("Password changed successfully."); // Return success message
+            // Validate the current password (Assuming password is stored as plain text, otherwise use hashing)
+            if (user.Password != model.CurrentPassword)
+            {
+                return BadRequest("The current password is incorrect.");
+            }
+
+            // Validate if new password and confirmation password match
+            if (model.NewPassword != model.ConfirmPassword)
+            {
+                return BadRequest("The new password and confirmation password do not match.");
+            }
+
+            // Update the password to the new one
+            user.Password = model.NewPassword;
+
+            try
+            {
+                // Save changes to the database
+                db.SaveChanges();
+            }
+            catch (DbEntityValidationException ex)
+            {
+                // Capture validation errors from the database
+                var validationErrors = new List<string>();
+                foreach (var validationError in ex.EntityValidationErrors)
+                {
+                    foreach (var error in validationError.ValidationErrors)
+                    {
+                        validationErrors.Add($"Property: {error.PropertyName} Error: {error.ErrorMessage}");
+                    }
+                }
+
+                // Return a BadRequest with detailed validation error messages
+                return BadRequest(string.Join("; ", validationErrors));
+            }
+
+            // Return success message if password change is successful
+            return Ok("Password changed successfully.");
         }
+
 
 
 

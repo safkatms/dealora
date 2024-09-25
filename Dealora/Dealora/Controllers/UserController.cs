@@ -247,11 +247,30 @@ namespace Dealora.Controllers
             }
         }
 
-        public ActionResult EditProfile()
+        [HttpGet]
+        public async Task<ActionResult> EditProfile()
         {
             if (Session["JWTToken"] != null)
             {
-                return View();
+                int userId = (int)Session["UserId"];  // Get the stored user ID
+
+                    // Call the API to get the user's profile details by user ID
+                    var response = await client.GetAsync($"users/{userId}");
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        // Deserialize the response into a User object
+                        var user = await response.Content.ReadAsAsync<User>();
+                        return View(user); // Pass the user data to the view
+                    }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        return RedirectToAction("Login"); // Redirect if unauthorized
+                    }
+                    else
+                    {
+                        return new HttpStatusCodeResult(response.StatusCode, "Error retrieving profile data.");
+                    }
             }
             else
             {
