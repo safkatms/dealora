@@ -11,3 +11,7 @@ packages/
 # User-specific files
 *.log
 *.DS_Store
+
+# Ignore build results
+**/bin/
+**/obj/
