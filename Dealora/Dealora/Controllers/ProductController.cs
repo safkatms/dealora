@@ -10,6 +10,7 @@ using System.Web.Mvc;
 using Dealora.Context;
 using Dealora.Models;
 using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace Dealora.Controllers
 {
@@ -27,10 +28,12 @@ namespace Dealora.Controllers
         // GET: Product
         public async Task<ActionResult> Index()
         {
-            try
+            if (Session["JWTToken"] != null)
             {
-                using (HttpClient client = new HttpClient())
-                {
+                try
+                {   // Set the Authorization header with the JWT token
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
+
                     client.BaseAddress = new Uri(@"http://localhost:9570/api/products");
                     var response = await client.GetAsync("products");
 
@@ -39,47 +42,84 @@ namespace Dealora.Controllers
                         var data = await response.Content.ReadAsAsync<IEnumerable<Product>>();
                         return View(data);
                     }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        return RedirectToAction("Login","User");
+                    }
                     else
-                        return HttpNotFound();
+                      return HttpNotFound();
+                    
+                }
+                catch (Exception ex)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Error occurred while fetching data.");
                 }
             }
-            catch (Exception ex)
+            else
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Error occurred while fetching data.");
-            }
+                return RedirectToAction("Login", "User");
+            }      
 
         }
 
         // GET: Product/Details/5
         public async Task<ActionResult> Details(int? id)
         {
-            try
+            if (Session["JWTToken"] != null)
             {
-                client.BaseAddress = new Uri(@"http://localhost:9570/api/products");
-                var response = await client.GetAsync("products/" + id.ToString());
-
-                if (response.IsSuccessStatusCode)
+                try
                 {
-                    var data = await response.Content.ReadAsAsync<Product>();
-                    return View(data);
+                    // Set the Authorization header with the JWT token
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
+
+                    client.BaseAddress = new Uri(@"http://localhost:9570/api/products");
+                    var response = await client.GetAsync("products/" + id.ToString());
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var data = await response.Content.ReadAsAsync<Product>();
+                        return View(data);
+                    }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        return RedirectToAction("Login", "User");
+                    }
+                    else
+                    return HttpNotFound();
                 }
-                return HttpNotFound();
+                catch (Exception ex)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "An unexpected error occurred. Please try again later.");
+                }
             }
-            catch(Exception ex)
+            else
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "An unexpected error occurred. Please try again later.");
+                return RedirectToAction("Login", "User");
             }
+               
             
         }
 
         // GET: Product/Create
         public ActionResult Create()
         {
-            /*ViewBag.CategoryId = new SelectList(_dbContext.Categories, "Id", "Name", product.CategoryId);
-            ViewBag.UserId = new SelectList(_dbContext.Users, "Id", "FirstName", product.UserId);*/
-            ViewBag.CategoryId = new SelectList(_dbContext.Categories, "Id", "Name");
-            ViewBag.UserId = new SelectList(_dbContext.Users, "Id", "FirstName");
-            return View();
+
+            if (Session["JWTToken"] != null)
+            {
+                // Set the Authorization header with the JWT token
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
+
+                /*ViewBag.CategoryId = new SelectList(_dbContext.Categories, "Id", "Name", product.CategoryId);
+                ViewBag.UserId = new SelectList(_dbContext.Users, "Id", "FirstName", product.UserId);*/
+                ViewBag.CategoryId = new SelectList(_dbContext.Categories, "Id", "Name");
+                ViewBag.UserId = new SelectList(_dbContext.Users, "Id", "FirstName");
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login", "User");
+            }
+                
         }
 
         // POST: Product/Create
@@ -87,42 +127,59 @@ namespace Dealora.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(Product product)
         {
-            try
+            if (Session["JWTToken"] != null)
             {
-                client.BaseAddress = new Uri(@"http://localhost:9570/api/addproduct");
-                var response = await client.PostAsJsonAsync("addproduct", product);
+                try
+                {
+                    // Set the Authorization header with the JWT token
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
 
-                if (response.IsSuccessStatusCode)
-                {
-                    return RedirectToAction("Index");
+                    client.BaseAddress = new Uri(@"http://localhost:9570/api/addproduct");
+                    var response = await client.PostAsJsonAsync("addproduct", product);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        return new HttpStatusCodeResult(response.StatusCode, "Unable to create the product. Please try again.");
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    return new HttpStatusCodeResult(response.StatusCode, "Unable to create the product. Please try again.");
+                    return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "An unexpected error occurred.");
                 }
             }
-            catch (Exception ex)
+            else
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "An unexpected error occurred.");
+                return RedirectToAction("Login", "User");
             }
-            
         }
 
         // GET: Product/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
-            if (id == null)
+            if (Session["JWTToken"] != null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                Product product = await _dbContext.Products.FindAsync(id);
+                if (product == null)
+                {
+                    return HttpNotFound();
+                }
+                ViewBag.CategoryId = new SelectList(_dbContext.Categories, "Id", "Name", product.CategoryId);
+                ViewBag.UserId = new SelectList(_dbContext.Users, "Id", "FirstName", product.UserId);
+                return View(product);
             }
-            Product product = await _dbContext.Products.FindAsync(id);
-            if (product == null)
+            else
             {
-                return HttpNotFound();
+                return RedirectToAction("Login", "User");
             }
-            ViewBag.CategoryId = new SelectList(_dbContext.Categories, "Id", "Name", product.CategoryId);
-            ViewBag.UserId = new SelectList(_dbContext.Users, "Id", "FirstName", product.UserId);
-            return View(product);
+
         }
 
         // POST: Product/Edit/5
@@ -130,33 +187,52 @@ namespace Dealora.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(Product product)
         {
-            client.BaseAddress = new Uri(@"http://localhost:9570/api/updateproduct");
-            var response = await client.PutAsJsonAsync("updateproduct/" + product.Id.ToString(), product);
-     
-            if (response.IsSuccessStatusCode)
+            if (Session["JWTToken"] != null)
             {
-                return RedirectToAction("Index");
+                // Set the Authorization header with the JWT token
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
+
+                client.BaseAddress = new Uri(@"http://localhost:9570/api/updateproduct");
+                var response = await client.PutAsJsonAsync("updateproduct/" + product.Id.ToString(), product);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return HttpNotFound();
+                }
             }
             else
             {
-                return HttpNotFound();
+                return RedirectToAction("Login", "User");
             }
-                
+
+
         }
 
         // GET: Product/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
-            if (id == null)
+            if (Session["JWTToken"] != null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                Product product = await _dbContext.Products.FindAsync(id);
+                if (product == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(product);
             }
-            Product product = await _dbContext.Products.FindAsync(id);
-            if (product == null)
+            else
             {
-                return HttpNotFound();
+                return RedirectToAction("Login", "User");
             }
-            return View(product);
+
         }
 
         // POST: Product/Delete/5
@@ -164,18 +240,29 @@ namespace Dealora.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            client.BaseAddress = new Uri(@"http://localhost:9570/api/deleteproduct");
-            var response = await client.DeleteAsync("deleteproduct/" + id.ToString());
-
-            if (response.IsSuccessStatusCode)
+            if (Session["JWTToken"] != null)
             {
-                return RedirectToAction("Index");
+                // Set the Authorization header with the JWT token
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
+
+                client.BaseAddress = new Uri(@"http://localhost:9570/api/deleteproduct");
+                var response = await client.DeleteAsync("deleteproduct/" + id.ToString());
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return HttpNotFound();
+                }
             }
             else
             {
-                return HttpNotFound();
+                return RedirectToAction("Login", "User");
             }
-               
+
+
         }
 
         protected override void Dispose(bool disposing)
