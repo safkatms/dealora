@@ -1,0 +1,68 @@
+﻿@model Dealora.Models.User
+
+@{
+    ViewBag.Title = "User Profile";
+}
+
+<div class="container mt-5">
+
+    <div class="row">
+        @Html.Partial("_Sidebar")
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="mb-4">Profile</h4>
+
+                <!-- Full Name -->
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label for="fullName" class="form-label">Full Name</label>
+                    </div>
+                    <div class="col-md-9">
+                        <span>@Html.DisplayFor(model => model.FirstName) @Html.DisplayFor(model => model.LastName)</span>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label for="email" class="form-label">Email Address</label>
+                    </div>
+                    <div class="col-md-9">
+                        <span>@Html.DisplayFor(model => model.Email)</span>
+                    </div>
+                </div>
+
+                <!-- Mobile -->
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label for="mobile" class="form-label">Mobile</label>
+                    </div>
+                    <div class="col-md-9">
+                        <span>@Html.DisplayFor(model => model.PhoneNumber)</span>
+                    </div>
+                </div>
+
+                <!-- Edit Profile & Change Password Buttons -->
+                <div class="row mb-3 mt-lg-5">
+                    <div class="col-md-3">
+                        <div class="d-flex flex-column">
+                            <div class="mb-2">
+                                @Html.ActionLink("Edit Profile", "EditProfile", "User", null, new { @class = "btn btn-primary w-100 " })
+                            </div>
+                            <div>
+                                @Html.ActionLink("Change Password", "ChangePassword", "User", null, new { @class = "btn btn-primary w-100" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+</div>

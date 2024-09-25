@@ -1,9 +1,73 @@
-﻿@{
-    ViewBag.Title = "About";
-}
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
-    <h3>@ViewBag.Message</h3>
+﻿<div class="container mt-5">
+    
+        @Html.Partial("_Sidebar")
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="mb-4">Edit Profile</h4>
 
-    <p>Use this area to provide additional information.</p>
-</main>
+                    <!-- Full Name -->
+                    <div class="mb-3">
+                        <label for="fullName" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="fullName" placeholder="First Last" value="Safkat Mahmud Sakib">
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>sa***************@@gmail.com</span>
+                            <a href="#" class="btn btn-link">Change</a>
+                        </div>
+                    </div>
+
+                    <!-- Mobile -->
+                    <div class="mb-3">
+                        <label for="mobile" class="form-label">Mobile</label>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>+880 162*****26</span>
+                            <a href="#" class="btn btn-link">Change</a>
+                        </div>
+                    </div>
+
+                    <!-- Birthday -->
+                    <div class="mb-3">
+                        <label for="birthday" class="form-label">Birthday</label>
+                        <div class="row">
+                            <div class="col">
+                                <select class="form-select" id="month">
+                                    <option selected>December</option>
+                                    <!-- Other months go here -->
+                                </select>
+                            </div>
+                            <div class="col">
+                                <select class="form-select" id="day">
+                                    <option selected>31</option>
+                                    <!-- Other days go here -->
+                                </select>
+                            </div>
+                            <div class="col">
+                                <select class="form-select" id="year">
+                                    <option selected>2001</option>
+                                    <!-- Other years go here -->
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gender -->
+                    <div class="mb-3">
+                        <label for="gender" class="form-label">Gender</label>
+                        <select class="form-select" id="gender">
+                            <option selected>Male</option>
+                            <option>Female</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+
+                    <!-- Save Button -->
+                    <button type="button" class="btn btn-primary btn-lg">SAVE CHANGES</button>
+                </div>
+            </div>
+        </div>
+    </div>

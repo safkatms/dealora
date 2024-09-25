@@ -25,21 +25,17 @@ namespace Dealora.Controllers
             this.client.BaseAddress = new Uri(@"http://localhost:9570/api/");
         }
 
+        
         // GET: User
         public async Task<ActionResult> Index()
         {
-            // Fetch the JWT token from Session
             if (Session["JWTToken"] != null)
             {
-                try
-                {
-                    // Set the Authorization header with the JWT token
+                
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
 
-                    // Call the API asynchronously to get the list of users
                     var response = await client.GetAsync("users");
 
-                    // If the response is successful, process the data
                     if (response.IsSuccessStatusCode)
                     {
                         var data = await response.Content.ReadAsAsync<IEnumerable<User>>();
@@ -47,20 +43,12 @@ namespace Dealora.Controllers
                     }
                     else if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
-                        // Token might be expired, redirect to login
                         return RedirectToAction("Login");
                     }
                     else
                     {
-                        // Handle other response statuses accordingly
                         return new HttpStatusCodeResult(response.StatusCode, "Error retrieving data from API.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    // Log the error and show an error page or handle the exception
-                    return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Error fetching users.");
-                }
+                    }   
             }
             else
             {
@@ -158,7 +146,6 @@ namespace Dealora.Controllers
         }
 
         // POST: User/Login
-        // POST: User/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginModel loginModel)
@@ -167,29 +154,27 @@ namespace Dealora.Controllers
             {
                 if (db.Users.Any(u => u.Email == loginModel.Email))
                 {
-                    // Call the API to log in and get the token
                     var response = await client.PostAsJsonAsync("users/login", loginModel);
 
                     if (response.IsSuccessStatusCode)
                     {
-                        // Deserialize the response into the TokenResponse class
                         var tokenResponse = await response.Content.ReadAsAsync<TokenResponse>();
 
-                        // Store the token in session for future use
                         Session["JWTToken"] = tokenResponse.token;
 
-                        // Extract claims from the token
                         var handler = new JwtSecurityTokenHandler();
                         var jwtToken = handler.ReadJwtToken(tokenResponse.token);
+                        var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub);
+                        if (userIdClaim != null)
+                        {
+                            Session["UserId"] = int.Parse(userIdClaim.Value);
+                        }
+                        Session["Firstname"] = jwtToken.Claims.First(c => c.Type == JwtRegisteredClaimNames.GivenName).Value; 
+                        Session["Lastname"] = jwtToken.Claims.First(c => c.Type == JwtRegisteredClaimNames.FamilyName).Value;
 
-                        // Store claims in session
-                        Session["Firstname"] = jwtToken.Claims.First(c => c.Type == JwtRegisteredClaimNames.Name).Value; 
-                        Session["Lastname"] = jwtToken.Claims.First(c => c.Type == JwtRegisteredClaimNames.Name).Value;
-
-                        // Set the Authorization header with the token for subsequent requests
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenResponse.token);
 
-                        return RedirectToAction("Index"); // Redirect to the user list or dashboard
+                        return RedirectToAction("Index");
                     }
                     else if (response.StatusCode == HttpStatusCode.NotFound)
                     {
@@ -219,6 +204,113 @@ namespace Dealora.Controllers
             Session.Clear();
             return RedirectToAction("Login");
         }
+
+
+        public async Task<ActionResult> UserProfile()
+        {
+            if (Session["JWTToken"] != null && Session["UserId"] != null)
+            {
+                try
+                {
+                    // Set Authorization header with JWT token
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
+
+                    // Retrieve the user ID from the session
+                    int userId = (int)Session["UserId"];  // Get the stored user ID
+
+                    // Call the API to get the user's profile details by user ID
+                    var response = await client.GetAsync($"users/{userId}");
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        // Deserialize the response into a User object
+                        var user = await response.Content.ReadAsAsync<User>();
+                        return View(user); // Pass the user data to the view
+                    }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        return RedirectToAction("Login"); // Redirect if unauthorized
+                    }
+                    else
+                    {
+                        return new HttpStatusCodeResult(response.StatusCode, "Error retrieving profile data.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Error fetching profile.");
+                }
+            }
+            else
+            {
+                return RedirectToAction("Login"); // Redirect to login if no token or no user ID
+            }
+        }
+
+        public ActionResult EditProfile()
+        {
+            if (Session["JWTToken"] != null)
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+        }
+
+        // GET: User/ChangePassword
+        [HttpGet]
+        public ActionResult ChangePassword()
+        {
+            if (Session["JWTToken"] != null)
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("User/ChangePassword")]
+        public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (Session["JWTToken"] != null)
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
+
+                    int userId = (int)Session["UserId"];
+
+                    var response = await client.PutAsJsonAsync($"api/Users/{userId}/ChangePassword", model);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        ViewBag.Message = "Password changed successfully!";
+                        return RedirectToAction("UserProfile");
+                    }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        return RedirectToAction("Login");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Error changing password.");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("Login");
+                }
+            }
+
+            return View(model);
+        }
+
 
         public class TokenResponse
         {

@@ -4,12 +4,15 @@ using Dealora.Models.ViewModel;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Validation;
+using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
+using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
 
@@ -19,11 +22,11 @@ namespace Dealora.Controllers.API
     {
         private DealoraAppDbContext db = new DealoraAppDbContext();
 
-
+        [Authorize(Roles ="Customer")]
         // GET: api/Users
-        public IQueryable<User> GetUsers()
+        public IEnumerable<User> GetUsers()
         {
-            return db.Users;
+            return db.Users.ToList();
         }
 
         // POST: api/Users/Signup
@@ -44,15 +47,65 @@ namespace Dealora.Controllers.API
                 return Conflict();
             }
 
-
-            //// Hash the password
-            //user.Password = HashPassword(user.Password); 
-
             db.Users.Add(user);
             db.SaveChanges();
 
             return CreatedAtRoute("UserSignup", new { id = user.Id }, user);
         }
+
+        [Route("api/Users/Update/{id}")]
+        [HttpPut]
+        public IHttpActionResult UpdateUsers(int id, User user)
+        {
+            if (!ModelState.IsValid)
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
+
+            var data = db.Users.FirstOrDefault(u => u.Id == id);
+
+            if (data == null)
+                return NotFound();
+
+            data.FirstName = user.FirstName;
+            data.LastName = user.LastName;
+            data.PhoneNumber = user.PhoneNumber;
+
+            db.SaveChanges();
+
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("api/Users/{id:int}")]
+        public IHttpActionResult GetUserProfile(int id)
+        {
+            var user = db.Users.FirstOrDefault(u => u.Id == id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(user);
+        }
+
+        [HttpPatch]
+        [Route("api/Users/ChangePassword/{id}")]
+        public IHttpActionResult ChangePassword(int id, [FromBody] ChangePasswordViewModel model)
+        {
+
+            var user = db.Users.FirstOrDefault(u => u.Id == id);
+
+            if (user == null)
+                return NotFound();
+            if(!string.IsNullOrEmpty(model.NewPassword))
+            {
+                user.Password = model.NewPassword; // Update the password
+            }
+            db.SaveChanges(); // Save changes to the database
+
+            return Ok("Password changed successfully."); // Return success message
+        }
+
 
 
         [HttpPost]
@@ -73,10 +126,11 @@ namespace Dealora.Controllers.API
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Name, user.FirstName),
+                new Claim(JwtRegisteredClaimNames.GivenName, user.FirstName),
                 new Claim(JwtRegisteredClaimNames.FamilyName, user.LastName),
-                new Claim(ClaimTypes.Role, user.Role.ToString()),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(ClaimTypes.Role, user.Role.ToString()), // Store the user's role
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Unique token ID
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()) // Convert integer User.Id to string
             };
 
             var token = new JwtSecurityToken(
