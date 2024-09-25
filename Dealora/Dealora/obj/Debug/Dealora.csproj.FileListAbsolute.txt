@@ -133,3 +133,4 @@ C:\Users\Asus\source\repos\dealora\Dealora\Dealora\bin\Microsoft.Owin.Security.O
 C:\Users\Asus\source\repos\dealora\Dealora\Dealora\bin\System.Web.Http.Owin.xml
 C:\Users\Asus\source\repos\dealora\Dealora\Dealora\bin\Microsoft.Owin.Host.SystemWeb.dll
 C:\Users\Asus\source\repos\dealora\Dealora\Dealora\bin\Microsoft.Owin.Host.SystemWeb.xml
+C:\Users\Asus\source\repos\dealora\Dealora\Dealora\bin\roslyn\System.Memory.dll
