@@ -13,7 +13,7 @@ namespace Dealora.Models.ViewModel
 
         [Required(ErrorMessage = "Confirm Password is required.")]
         [Compare("NewPassword", ErrorMessage = "Password and Confirm Password do not match.")]
-        public string ConPassword { get; set; }
+        public string ConfirmPassword { get; set; }
     }
 
 }
