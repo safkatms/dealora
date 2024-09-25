@@ -46,9 +46,22 @@ namespace Dealora.Controllers.API
         [HttpPost]
         public IHttpActionResult AddProduct(Product product)
         {
+            //validation
             if (!ModelState.IsValid)
-                return BadRequest(); 
+            {
+                return BadRequest();
+            }
 
+            if (product.StockQuantity < 0)
+            {
+                return BadRequest("Stock quantity cannot be negative.");
+            }
+
+            if (product.Price < 0)
+            {
+                return BadRequest("Price cannot be negative.");
+            }
+        
             _dbContext.Products.Add(product);
             _dbContext.SaveChanges();
 
@@ -56,44 +69,56 @@ namespace Dealora.Controllers.API
         }
 
         //update prodcut by id
-
+        [Route("api/updateproduct/{id}")]
+        [HttpPut]
         public IHttpActionResult UpdateGames(int id, Product product)
         {
             if (!ModelState.IsValid)
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
+            {
+                return BadRequest();
+            }
+            if (product.StockQuantity < 0)
+            {
+                return BadRequest("Stock quantity cannot be negative.");
+            }
 
-            var data = _dbContext.Products.FirstOrDefault(g => g.Id == id);
+            if (product.Price < 0)
+            {
+                return BadRequest("Price cannot be negative.");
+            }
 
-            if (data == null)
+            var existingProduct = _dbContext.Products.FirstOrDefault(g => g.Id == id);
+
+            if (existingProduct == null)
                 return NotFound();
 
-            data.Name = product.Name;
-            data.Description= product.Description;
-            data.Price = product.Price;
-            data.StockQuantity = product.StockQuantity;
-            data.IsActive = product.IsActive;
-            data.ImageUrl = product.ImageUrl;
-            data.DateAdded = product.DateAdded;
+            existingProduct.Name = product.Name;
+            existingProduct.Description = product.Description;
+            existingProduct.Price = product.Price;
+            existingProduct.StockQuantity = product.StockQuantity;
+            existingProduct.IsActive = product.IsActive;
+            existingProduct.ImageUrl = product.ImageUrl;
+            existingProduct.DateAdded = product.DateAdded;
 
 
             _dbContext.SaveChanges();
 
-            return Ok();
+            return Ok(product);
         }
-        [Route("api/deletegames/{id}")]
+        [Route("api/deleteproduct/{id}")]
         [HttpDelete]
         public IHttpActionResult DeleteProduct(int id) 
         {
-            var data = _dbContext.Products.FirstOrDefault(g => g.Id == id);
+            var existingProduct = _dbContext.Products.FirstOrDefault(g => g.Id == id);
 
             //Check product existance
-            if (data == null)
+            if (existingProduct == null)
                 return NotFound(); 
 
-            _dbContext.Products.Remove(data);
+            _dbContext.Products.Remove(existingProduct);
             _dbContext.SaveChanges();
 
-            return Ok();
+            return Ok(existingProduct);
         }
     }
 }
