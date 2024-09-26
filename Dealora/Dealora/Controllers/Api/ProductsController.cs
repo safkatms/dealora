@@ -71,7 +71,7 @@ namespace Dealora.Controllers.API
         //update prodcut by id
         [Route("api/updateproduct/{id}")]
         [HttpPut]
-        public IHttpActionResult UpdateGames(int id, Product product)
+        public IHttpActionResult UpdateProduct(int id, Product product)
         {
             if (!ModelState.IsValid)
             {
