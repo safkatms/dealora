@@ -18,12 +18,29 @@ namespace Dealora.Controllers.API
             this._dbContext = new DealoraAppDbContext();
         }
 
-        // GET: Products
+        // GET: Category
         [HttpGet]
         [Route("api/Categories")]
-        public IEnumerable<Category> GetProducts()
+        public IEnumerable<Category> GetCategories()
         {
             return _dbContext.Categories.ToList();
+        }
+
+        //Post : Category
+        [Route("api/addcategories")]
+        [HttpPost]
+        public IHttpActionResult AddCategory(Category category)
+        {
+            //validation
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            _dbContext.Categories.Add(category);
+            _dbContext.SaveChanges();
+
+            return Ok(category);
         }
     }
 }
