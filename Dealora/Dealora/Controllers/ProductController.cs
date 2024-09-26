@@ -35,8 +35,10 @@ namespace Dealora.Controllers
                 {   // Set the Authorization header with the JWT token
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
 
-                    client.BaseAddress = new Uri(@"http://localhost:9570/api/products");
-                    var response = await client.GetAsync("products");
+                    int userId = (int)Session["UserId"];
+
+                    client.BaseAddress = new Uri(@"http://localhost:9570/api/products/userId");
+                    var response = await client.GetAsync("userId/" + userId.ToString());
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -110,9 +112,6 @@ namespace Dealora.Controllers
                 // Set the Authorization header with the JWT token
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
 
-
-                ViewBag.UserId = new SelectList(_dbContext.Users, "Id", "FirstName");
-
                 // Fetch categories through API
                 client.BaseAddress = new Uri(@"http://localhost:9570/api/");
                 var response = await client.GetAsync("categories");
@@ -127,12 +126,9 @@ namespace Dealora.Controllers
                     return new HttpStatusCodeResult(response.StatusCode, "Unable to fetch categories.");
                 }
 
-                // Set the current logged-in user's ID in ViewBag
-               /* int userId = (int)Session["UserId"];
-                string firstName = (string)Session["Firstname"];
+                TempData["UserId"] = (int)Session["UserId"];
+                TempData["FirstName"] = (string)Session["FirstName"];
 
-                ViewBag.UserId = userId; // For hidden field
-                ViewBag.FirstName = firstName; //*/
                 return View();
             }
             else
@@ -201,18 +197,45 @@ namespace Dealora.Controllers
         {
             if (Session["JWTToken"] != null)
             {
-                if (id == null)
+                // Set the Authorization header with the JWT token
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
+
+                // Fetch categories through API
+                client.BaseAddress = new Uri(@"http://localhost:9570/api/");
+                var response = await client.GetAsync("categories");
+
+                if (response.IsSuccessStatusCode)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    var categories = await response.Content.ReadAsAsync<IEnumerable<Category>>();
+                    ViewBag.CategoryId = new SelectList(categories, "Id", "Name");
                 }
-                Product product = await _dbContext.Products.FindAsync(id);
-                if (product == null)
+                else
                 {
-                    return HttpNotFound();
+                    return new HttpStatusCodeResult(response.StatusCode, "Unable to fetch categories.");
                 }
-                ViewBag.CategoryId = new SelectList(_dbContext.Categories, "Id", "Name", product.CategoryId);
-                ViewBag.UserId = new SelectList(_dbContext.Users, "Id", "FirstName", product.UserId);
-                return View(product);
+
+                TempData["UserId"] = (int)Session["UserId"];
+                TempData["FirstName"] = (string)Session["FirstName"];
+
+                //fetch product for view
+                var productResponse = await client.GetAsync("products/" + id.ToString());
+
+                if (productResponse.IsSuccessStatusCode)
+                {
+                    // Read as a single product
+                    var product = await productResponse.Content.ReadAsAsync<Product>();
+
+                    if (product == null)
+                    {
+                        return HttpNotFound();
+                    }
+
+                    return View(product);
+                }
+                else
+                {
+                    return new HttpStatusCodeResult(productResponse.StatusCode, "Unable to fetch product.");
+                }
             }
             else
             {
@@ -256,16 +279,27 @@ namespace Dealora.Controllers
         {
             if (Session["JWTToken"] != null)
             {
-                if (id == null)
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
+
+                client.BaseAddress = new Uri(@"http://localhost:9570/api/");
+                var productResponse = await client.GetAsync("products/" + id.ToString());
+
+                if (productResponse.IsSuccessStatusCode)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    // Read as a single product
+                    var product = await productResponse.Content.ReadAsAsync<Product>();
+
+                    if (product == null)
+                    {
+                        return HttpNotFound();
+                    }
+
+                    return View(product);
                 }
-                Product product = await _dbContext.Products.FindAsync(id);
-                if (product == null)
+                else
                 {
-                    return HttpNotFound();
+                    return new HttpStatusCodeResult(productResponse.StatusCode, "Unable to fetch product.");
                 }
-                return View(product);
             }
             else
             {
