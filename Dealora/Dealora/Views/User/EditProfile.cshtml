@@ -1,0 +1,67 @@
+﻿@model Dealora.Models.ViewModel.UserUpdateModel
+
+@{
+    ViewBag.Title = "EditProfile";
+}
+
+<h2>EditProfile</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="container mt-5">
+
+        <div class="row">
+            @Html.Partial("_Sidebar")
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="mb-4">Profile Edit</h4>
+
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <label class="form-label">First Name</label>
+                            </div>
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Last Name</label>
+                            </div>
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Phone Number</label>
+                            </div>
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-9">
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -210,8 +210,11 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Context\DealoraAppDbContext.cs" />
+    <Compile Include="Controllers\API\CategoryController.cs" />
+    <Compile Include="Controllers\API\ProductsController.cs" />
     <Compile Include="Controllers\API\UsersController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -219,6 +222,10 @@
     <Compile Include="Migrations\202409241318572_CreateTables.cs" />
     <Compile Include="Migrations\202409241318572_CreateTables.Designer.cs">
       <DependentUpon>202409241318572_CreateTables.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202409252217093_UpdateUserTable.cs" />
+    <Compile Include="Migrations\202409252217093_UpdateUserTable.Designer.cs">
+      <DependentUpon>202409252217093_UpdateUserTable.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Address.cs" />
@@ -233,7 +240,10 @@
     <Compile Include="Models\Shipping.cs" />
     <Compile Include="Models\ShoppingCart.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\ViewModel\ChangePasswordViewModel.cs" />
     <Compile Include="Models\ViewModel\LoginModel.cs" />
+    <Compile Include="Models\ViewModel\SignUpModel.cs" />
+    <Compile Include="Models\ViewModel\UserUpdateModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -286,6 +296,103 @@
     <Content Include="Content\bootstrap-grid.rtl.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
+    <Content Include="Content\bootstrap\_variables.scss" />
+    <Content Include="Content\bootstrap\_variables-dark.scss" />
+    <Content Include="Content\bootstrap\_utilities.scss" />
+    <Content Include="Content\bootstrap\_type.scss" />
+    <Content Include="Content\bootstrap\_transitions.scss" />
+    <Content Include="Content\bootstrap\_tooltip.scss" />
+    <Content Include="Content\bootstrap\_toasts.scss" />
+    <Content Include="Content\bootstrap\_tables.scss" />
+    <Content Include="Content\bootstrap\_spinners.scss" />
+    <Content Include="Content\bootstrap\_root.scss" />
+    <Content Include="Content\bootstrap\_reboot.scss" />
+    <Content Include="Content\bootstrap\_progress.scss" />
+    <Content Include="Content\bootstrap\_popover.scss" />
+    <Content Include="Content\bootstrap\_placeholders.scss" />
+    <Content Include="Content\bootstrap\_pagination.scss" />
+    <Content Include="Content\bootstrap\_offcanvas.scss" />
+    <Content Include="Content\bootstrap\_navbar.scss" />
+    <Content Include="Content\bootstrap\_nav.scss" />
+    <Content Include="Content\bootstrap\_modal.scss" />
+    <Content Include="Content\bootstrap\_mixins.scss" />
+    <Content Include="Content\bootstrap\_maps.scss" />
+    <Content Include="Content\bootstrap\_list-group.scss" />
+    <Content Include="Content\bootstrap\_images.scss" />
+    <Content Include="Content\bootstrap\_helpers.scss" />
+    <Content Include="Content\bootstrap\_grid.scss" />
+    <Content Include="Content\bootstrap\_functions.scss" />
+    <Content Include="Content\bootstrap\_forms.scss" />
+    <Content Include="Content\bootstrap\_dropdown.scss" />
+    <Content Include="Content\bootstrap\_containers.scss" />
+    <Content Include="Content\bootstrap\_close.scss" />
+    <Content Include="Content\bootstrap\_carousel.scss" />
+    <Content Include="Content\bootstrap\_card.scss" />
+    <Content Include="Content\bootstrap\_buttons.scss" />
+    <Content Include="Content\bootstrap\_button-group.scss" />
+    <Content Include="Content\bootstrap\_breadcrumb.scss" />
+    <Content Include="Content\bootstrap\_badge.scss" />
+    <Content Include="Content\bootstrap\_alert.scss" />
+    <Content Include="Content\bootstrap\_accordion.scss" />
+    <Content Include="Content\bootstrap\vendor\_rfs.scss" />
+    <Content Include="Content\bootstrap\utilities\_api.scss" />
+    <Content Include="Content\bootstrap\tests\utilities\_api.test.scss" />
+    <Content Include="Content\bootstrap\tests\mixins\_utilities.test.scss" />
+    <Content Include="Content\bootstrap\tests\mixins\_media-query-color-mode-full.test.scss" />
+    <Content Include="Content\bootstrap\tests\mixins\_color-modes.test.scss" />
+    <Content Include="Content\bootstrap\tests\mixins\_auto-import-of-variables-dark.test.scss" />
+    <Content Include="Content\bootstrap\mixins\_visually-hidden.scss" />
+    <Content Include="Content\bootstrap\mixins\_utilities.scss" />
+    <Content Include="Content\bootstrap\mixins\_transition.scss" />
+    <Content Include="Content\bootstrap\mixins\_text-truncate.scss" />
+    <Content Include="Content\bootstrap\mixins\_table-variants.scss" />
+    <Content Include="Content\bootstrap\mixins\_resize.scss" />
+    <Content Include="Content\bootstrap\mixins\_reset-text.scss" />
+    <Content Include="Content\bootstrap\mixins\_pagination.scss" />
+    <Content Include="Content\bootstrap\mixins\_lists.scss" />
+    <Content Include="Content\bootstrap\mixins\_list-group.scss" />
+    <Content Include="Content\bootstrap\mixins\_image.scss" />
+    <Content Include="Content\bootstrap\mixins\_grid.scss" />
+    <Content Include="Content\bootstrap\mixins\_gradients.scss" />
+    <Content Include="Content\bootstrap\mixins\_forms.scss" />
+    <Content Include="Content\bootstrap\mixins\_deprecate.scss" />
+    <Content Include="Content\bootstrap\mixins\_container.scss" />
+    <Content Include="Content\bootstrap\mixins\_color-scheme.scss" />
+    <Content Include="Content\bootstrap\mixins\_color-mode.scss" />
+    <Content Include="Content\bootstrap\mixins\_clearfix.scss" />
+    <Content Include="Content\bootstrap\mixins\_caret.scss" />
+    <Content Include="Content\bootstrap\mixins\_buttons.scss" />
+    <Content Include="Content\bootstrap\mixins\_breakpoints.scss" />
+    <Content Include="Content\bootstrap\mixins\_box-shadow.scss" />
+    <Content Include="Content\bootstrap\mixins\_border-radius.scss" />
+    <Content Include="Content\bootstrap\mixins\_banner.scss" />
+    <Content Include="Content\bootstrap\mixins\_backdrop.scss" />
+    <Content Include="Content\bootstrap\mixins\_alert.scss" />
+    <Content Include="Content\bootstrap\helpers\_vr.scss" />
+    <Content Include="Content\bootstrap\helpers\_visually-hidden.scss" />
+    <Content Include="Content\bootstrap\helpers\_text-truncation.scss" />
+    <Content Include="Content\bootstrap\helpers\_stretched-link.scss" />
+    <Content Include="Content\bootstrap\helpers\_stacks.scss" />
+    <Content Include="Content\bootstrap\helpers\_ratio.scss" />
+    <Content Include="Content\bootstrap\helpers\_position.scss" />
+    <Content Include="Content\bootstrap\helpers\_icon-link.scss" />
+    <Content Include="Content\bootstrap\helpers\_focus-ring.scss" />
+    <Content Include="Content\bootstrap\helpers\_colored-links.scss" />
+    <Content Include="Content\bootstrap\helpers\_color-bg.scss" />
+    <Content Include="Content\bootstrap\helpers\_clearfix.scss" />
+    <Content Include="Content\bootstrap\forms\_validation.scss" />
+    <Content Include="Content\bootstrap\forms\_labels.scss" />
+    <Content Include="Content\bootstrap\forms\_input-group.scss" />
+    <Content Include="Content\bootstrap\forms\_form-text.scss" />
+    <Content Include="Content\bootstrap\forms\_form-select.scss" />
+    <Content Include="Content\bootstrap\forms\_form-range.scss" />
+    <Content Include="Content\bootstrap\forms\_form-control.scss" />
+    <Content Include="Content\bootstrap\forms\_form-check.scss" />
+    <Content Include="Content\bootstrap\forms\_floating-labels.scss" />
+    <Content Include="Content\bootstrap\bootstrap.scss" />
+    <Content Include="Content\bootstrap\bootstrap-utilities.scss" />
+    <Content Include="Content\bootstrap\bootstrap-reboot.scss" />
+    <Content Include="Content\bootstrap\bootstrap-grid.scss" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
@@ -312,16 +419,24 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\User\Create.cshtml" />
-    <Content Include="Views\User\Delete.cshtml" />
-    <Content Include="Views\User\Details.cshtml" />
-    <Content Include="Views\User\Edit.cshtml" />
     <Content Include="Views\User\Index.cshtml" />
     <Content Include="Views\User\SignUp.cshtml" />
     <Content Include="Views\Shared\_PublicView.cshtml" />
     <Content Include="Views\User\Login.cshtml" />
+    <Content Include="Views\Product\Create.cshtml" />
+    <Content Include="Views\Product\Delete.cshtml" />
+    <Content Include="Views\Product\Details.cshtml" />
+    <Content Include="Views\Product\Edit.cshtml" />
+    <Content Include="Views\Product\Index.cshtml" />
+    <Content Include="Views\Shared\_Sidebar.cshtml" />
+    <Content Include="Views\User\UserProfile.cshtml" />
+    <Content Include="Views\User\EditProfile.cshtml" />
+    <Content Include="Views\User\ChangePassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Product_Image\" />
+    <Folder Include="Views\Category\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -331,6 +446,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202409241318572_CreateTables.resx">
       <DependentUpon>202409241318572_CreateTables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202409252217093_UpdateUserTable.resx">
+      <DependentUpon>202409252217093_UpdateUserTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -28,10 +28,11 @@
                     <div class="col-lg-5 mb-5 mb-lg-0">
                         <div class="card">
                             <div class="card-body py-5 px-md-5 border border-1 border-primary rounded">
-                                @if (TempData["Invalid"]  != null)
+                                @if (TempData["Invalid"] != null)
                                 {
-                                    <div id="hide" class="alert alert-danger">
-                                        <strong> @TempData["Invalid"]</strong>
+                                    <div id="hide" class="alert alert-dismissible alert-danger">
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        <strong>@TempData["Invalid"]</strong>
                                     </div>
                                 }
                                 <!-- Email input -->
@@ -79,3 +80,6 @@
 
 
 
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

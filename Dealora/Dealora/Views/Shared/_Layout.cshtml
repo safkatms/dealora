@@ -6,9 +6,9 @@
     <title>@ViewBag.Title - Dealora</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-    @*<link href="~/Content/MyCSS.css" rel="stylesheet" />*@
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link href="~/Content/MyCSS.css" rel="stylesheet" />
+    @*<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>*@
 </head>
 <body>
     <header>
@@ -23,10 +23,11 @@
                         <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                         <li>@Html.ActionLink("Shop", "Index", "Products", new { area = "" }, new { @class = "nav-link" })</li>
                         <li>@Html.ActionLink("Categories", "Index", "Categories", new { area = "" }, new { @class = "nav-link" })</li>
-                        @if (Session["Type"] == "Customer")
+                        @if (Session["Type"] != null && Session["Type"].ToString() == "Customer")
                         {
                             <li>@Html.ActionLink("Cart", "Index", "ShoppingCart", new { area = "" }, new { @class = "nav-link" })</li>
                         }
+
                         <li>@Html.ActionLink("Contact Us", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                     </ul>
 
@@ -37,8 +38,8 @@
                             <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
                         </form>
                     </div>
-                       
-                    
+
+
                     <!-- Right-align the partial view -->
                     <div class="ms-auto">
                         @Html.Partial("_PublicView")
@@ -56,7 +57,7 @@
             <p class="text-primary">&copy; @DateTime.Now.Year - Dealora</p>
         </footer>
     </div>
-
+    @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
