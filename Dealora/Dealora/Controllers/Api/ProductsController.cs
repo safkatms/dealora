@@ -28,6 +28,13 @@ namespace Dealora.Controllers.API
             return _dbContext.Products.ToList();
         }
 
+        //Get: Returnproducts spec user
+        [HttpGet]
+        [Route("api/products/userId/{userId}")]
+        public IEnumerable<Product> GetProductsByUserId(int userId)
+        {
+            return _dbContext.Products.Where(p => p.UserId == userId).ToList();
+        }
         // GET: api/products/{id}
         [HttpGet]
         [Route("api/products/{id}")]
