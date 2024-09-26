@@ -56,7 +56,7 @@ namespace Dealora.Controllers.API
         
 
 
-
+        //view profile
         [HttpGet]
         [Route("api/Users/{id:int}")]
         public IHttpActionResult GetUserProfile(int id)
@@ -71,7 +71,7 @@ namespace Dealora.Controllers.API
             return Ok(user);
         }
 
-
+        //update profile
         [Route("api/Users/Update/{id}")]
         [HttpPut]
         public IHttpActionResult UpdateUsers(int id, [FromBody] UserUpdateModel user)
