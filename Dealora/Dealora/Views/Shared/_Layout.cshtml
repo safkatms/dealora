@@ -23,11 +23,6 @@
                         <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                         <li>@Html.ActionLink("Shop", "Index", "Products", new { area = "" }, new { @class = "nav-link" })</li>
                         <li>@Html.ActionLink("Categories", "Index", "Categories", new { area = "" }, new { @class = "nav-link" })</li>
-                        @if (Session["Type"] != null && Session["Type"].ToString() == "Customer")
-                        {
-                            <li>@Html.ActionLink("Cart", "Index", "ShoppingCart", new { area = "" }, new { @class = "nav-link" })</li>
-                        }
-
                         <li>@Html.ActionLink("Contact Us", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                     </ul>
 

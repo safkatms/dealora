@@ -4,82 +4,104 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
 
-<p>
+
+@*<p>
     @Html.ActionLink("Create New", "Create")
-</p>
+</p>*@
 
-<table class="table table-hover table-bordered" id="UsersTable">
-    <thead class="table-info">
-        <tr>
-            <th scope="col">@Html.DisplayNameFor(model => model.FirstName)</th>
-            <th scope="col">@Html.DisplayNameFor(model => model.LastName)</th>
-            <th scope="col">@Html.DisplayNameFor(model => model.Email)</th>
-            <th scope="col">@Html.DisplayNameFor(model => model.Password)</th>
-            <th scope="col">@Html.DisplayNameFor(model => model.PhoneNumber)</th>
-            <th scope="col">@Html.DisplayNameFor(model => model.Role)</th>
-            <th scope="col">@Html.DisplayNameFor(model => model.DateCreated)</th>
-            <th scope="col">@Html.DisplayNameFor(model => model.IsActive)</th>
-            <th scope="col"></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr class="table-secondary">
-                <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
-                <td>@Html.DisplayFor(modelItem => item.LastName)</td>
-                <td>@Html.DisplayFor(modelItem => item.Email)</td>
-                <td>@Html.DisplayFor(modelItem => item.Password)</td>
-                <td>@Html.DisplayFor(modelItem => item.PhoneNumber)</td>
-                <td>@Html.DisplayFor(modelItem => item.Role)</td>
-                <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
-                <td>@Html.DisplayFor(modelItem => item.IsActive)</td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="container mt-5">
 
-@section scripts {
-    <!-- jQuery and DataTables -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+    <div class="row">
+        @Html.Partial("_Sidebar")
+        <div class="col-md-9">
+            <div class="card">
+                    <table class="table table-hover table-bordered" id="UsersTable">
+                        <thead class="table-info">
+                            <tr>
+                                <th scope="col">@Html.DisplayNameFor(model => model.FirstName)</th>
+                                <th scope="col">@Html.DisplayNameFor(model => model.LastName)</th>
+                                <th scope="col">@Html.DisplayNameFor(model => model.Email)</th>
+                                <th scope="col">@Html.DisplayNameFor(model => model.PhoneNumber)</th>
+                                <th scope="col">@Html.DisplayNameFor(model => model.Role)</th>
+                                <th scope="col">@Html.DisplayNameFor(model => model.DateCreated)</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr class="table-secondary">
+                                    <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.LastName)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.PhoneNumber)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Role)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
+                                    <td>
+                                        @if (item.IsActive)
+                                        {
+                                            using (Html.BeginForm("BanUser", "User", FormMethod.Post))
+                                            {
+                                                @Html.AntiForgeryToken()
+                                                @Html.Hidden("id", item.Id)
+                                                <input type="submit" value="Ban" class="btn btn-danger" onclick="return confirm('Are you sure you want to ban this user?');" />
+                                            }
+                                        }
+                                        else
+                                        {
+                                            using (Html.BeginForm("UnbanUser", "User", FormMethod.Post))
+                                            {
+                                                @Html.AntiForgeryToken()
+                                                @Html.Hidden("id", item.Id)
+                                                <input type="submit" value="Unban" class="btn btn-success" onclick="return confirm('Are you sure you want to unban this user?');" />
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <script>
-        $(document).ready(function () {
-            // Initialize DataTable
-            var table = $('#UsersTable').DataTable({
-                "dom": '<"top"f>t<"bottom"p><"clear">', // Custom placement of elements
-                "language": {
-                    "search": "", // Remove the default 'Search' label
-                    "searchPlaceholder": "Type to search..." // Placeholder text
-                }
-            });
+                    
 
-            // Style the search box
-            $('#UsersTable_filter input')
-                .addClass('form-control') // Add Bootstrap styling
-                .attr('placeholder', 'Search users...') // Add custom placeholder
-                .css({
-                    'width': '300px',
-                    'display': 'inline-block',
-                    'margin-left': '10px'
-                });
+                    @section scripts {
+                        <!-- jQuery and DataTables -->
+                        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
+                        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                        <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
 
-            // Optionally, adjust the table wrapper for a cleaner look
-            $('#UsersTable_wrapper .top').css({
-                'display': 'flex',
-                'justify-content': 'flex-end',
-                'margin-bottom': '10px'
-            });
-        });
-    </script>
-}
-    
+                        <script>
+                            $(document).ready(function () {
+                                // Initialize DataTable
+                                var table = $('#UsersTable').DataTable({
+                                    "dom": '<"top"f>t<"bottom"p><"clear">', // Custom placement of elements
+                                    "language": {
+                                        "search": "", // Remove the default 'Search' label
+                                        "searchPlaceholder": "Type to search..." // Placeholder text
+                                    }
+                                });
+
+                                // Style the search box
+                                $('#UsersTable_filter input')
+                                    .addClass('form-control') // Add Bootstrap styling
+                                    .attr('placeholder', 'Search users...') // Add custom placeholder
+                                    .css({
+                                        'width': '300px',
+                                        'display': 'inline-block',
+                                        'margin-left': '10px'
+                                    });
+
+                                // Optionally, adjust the table wrapper for a cleaner look
+                                $('#UsersTable_wrapper .top').css({
+                                    'display': 'flex',
+                                    'justify-content': 'flex-end',
+                                    'margin-bottom': '10px'
+                                });
+                            });
+                        </script>
+                    }

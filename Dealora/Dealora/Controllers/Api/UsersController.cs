@@ -22,12 +22,13 @@ namespace Dealora.Controllers.API
     {
         private DealoraAppDbContext db = new DealoraAppDbContext();
 
-        [Authorize(Roles ="Customer")]
+        [Authorize(Roles ="Admin")]
         // GET: api/Users
         public IEnumerable<User> GetUsers()
         {
-            return db.Users.ToList();
+            return db.Users.Where(u => u.Role != UserRole.Admin).ToList();
         }
+
 
         // POST: api/Users/Signup
         [HttpPost]
@@ -41,7 +42,6 @@ namespace Dealora.Controllers.API
                 return BadRequest(ModelState);
             }
 
-            // Check if the email is already registered
             if (db.Users.Any(u => u.Email == user.Email))
             {
                 return Conflict();
@@ -77,7 +77,7 @@ namespace Dealora.Controllers.API
         public IHttpActionResult UpdateUsers(int id, [FromBody] UserUpdateModel user)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState); // Return validation errors
+                return BadRequest(ModelState); 
 
             var data = db.Users.FirstOrDefault(u => u.Id == id);
 
@@ -129,6 +129,10 @@ namespace Dealora.Controllers.API
         [Route("api/Users/Login")]
         public IHttpActionResult Login([FromBody] LoginModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var user = db.Users.SingleOrDefault(u => u.Email == model.Email && u.Password == model.Password);
 
             if (user == null) return Unauthorized();
@@ -136,6 +140,7 @@ namespace Dealora.Controllers.API
             var token = GenerateJwtToken(user);
             return Ok(new { token });
         }
+
 
         private string GenerateJwtToken(User user)
         {
