@@ -44,5 +44,6 @@ namespace Dealora.Models.ViewModel
         [Phone(ErrorMessage = "Invalid Phone Number")]
         [StringLength(20, ErrorMessage = "Phone Number cannot be longer than 20 characters")]
         public string PhoneNumber { get; set; }
+
     }
 }

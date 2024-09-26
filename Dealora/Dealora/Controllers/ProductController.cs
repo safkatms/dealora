@@ -147,6 +147,7 @@ namespace Dealora.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(Product product, HttpPostedFileBase ProductImage)
         {
+            
             if (Session["JWTToken"] != null)
             {
                 try

@@ -1,6 +1,7 @@
 ﻿using Dealora.Context;
 using Dealora.Models;
 using Dealora.Models.ViewModel;
+using Dealora.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -69,7 +70,6 @@ namespace Dealora.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SignUp(SignUpModel user)
         {
-            // Check if the email is already registered
             if (db.Users.Any(u => u.Email == user.Email))
             {
                 ModelState.AddModelError("Email", "Email is already registered.");
@@ -77,7 +77,6 @@ namespace Dealora.Controllers
 
             if (ModelState.IsValid)
             {
-                // Call the API to sign up the user
                 var response = client.PostAsJsonAsync("users/signup", user);
                 response.Wait();
 
@@ -151,11 +150,8 @@ namespace Dealora.Controllers
 
 
 
-
-        // Logout functionality
         public ActionResult Logout()
         {
-            // Clear the session to log out the user
             Session.Clear();
             return RedirectToAction("Login");
         }
@@ -165,43 +161,34 @@ namespace Dealora.Controllers
         {
             if (Session["JWTToken"] != null && Session["UserId"] != null)
             {
-                try
-                {
-                    // Set Authorization header with JWT token
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
 
-                    // Retrieve the user ID from the session
-                    int userId = (int)Session["UserId"];  // Get the stored user ID
+                    int userId = (int)Session["UserId"];
 
-                    // Call the API to get the user's profile details by user ID
                     var response = await client.GetAsync($"users/{userId}");
 
                     if (response.IsSuccessStatusCode)
                     {
-                        // Deserialize the response into a User object
                         var user = await response.Content.ReadAsAsync<User>();
-                        return View(user); // Pass the user data to the view
+                        return View(user);
                     }
                     else if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
-                        return RedirectToAction("Login"); // Redirect if unauthorized
+                        return RedirectToAction("Login");
                     }
                     else
                     {
                         return new HttpStatusCodeResult(response.StatusCode, "Error retrieving profile data.");
                     }
-                }
-                catch (Exception ex)
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Error fetching profile.");
-                }
+                
             }
             else
             {
-                return RedirectToAction("Login"); // Redirect to login if no token or no user ID
+                return RedirectToAction("Login");
             }
         }
 
+        //Edit Profile View
         [HttpGet]
         public async Task<ActionResult> EditProfile()
         {
@@ -209,24 +196,20 @@ namespace Dealora.Controllers
             {
                 int userId = (int)Session["UserId"];
 
-                // Call the API to get the user's profile details by user ID
                 var response = await client.GetAsync($"users/{userId}");
 
                 if (response.IsSuccessStatusCode)
                 {
-                    // Deserialize the response into a User object
                     var user = await response.Content.ReadAsAsync<User>();
 
-                    // Convert User to UserUpdateModel
                     var userUpdateModel = new UserUpdateModel
                     {
                         FirstName = user.FirstName,
                         LastName = user.LastName,
                         PhoneNumber = user.PhoneNumber,
-                        // Add other fields as necessary
                     };
 
-                    return View(userUpdateModel); // Pass the UserUpdateModel to the view
+                    return View(userUpdateModel);
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
@@ -243,7 +226,7 @@ namespace Dealora.Controllers
             }
         }
 
-
+        //Edit Profile
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("User/ChangePassword")]
@@ -298,6 +281,7 @@ namespace Dealora.Controllers
             }
         }
 
+        // Post: User/ChangePassword
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("User/ChangePassword")]
@@ -311,8 +295,8 @@ namespace Dealora.Controllers
                     int userId = (int)Session["UserId"];
 
                     var response = await client.PutAsJsonAsync($"Users/ChangePassword/{userId}", model);
-                    var responseContent = await response.Content.ReadAsStringAsync(); // Get response content
-                    Console.WriteLine(responseContent); // Log response content
+                    var responseContent = await response.Content.ReadAsStringAsync(); 
+                    Console.WriteLine(responseContent); 
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -337,6 +321,49 @@ namespace Dealora.Controllers
             return View(model);
         }
 
+
+        //Create Seller/User
+
+        [HttpGet]
+        public ActionResult Create()
+        {
+            //ViewBag.Roles = Enum.GetValues(typeof(UserRole)).Cast<UserRole>().ToList();
+            if (Session["JWTToken"] != null)
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(CreateUserViewModel user)
+        {
+            if (db.Users.Any(u => u.Email == user.Email))
+            {
+                ModelState.AddModelError("Email", "Email is already registered.");
+            }
+
+            if (ModelState.IsValid)
+            {
+                var response = client.PostAsJsonAsync("users/signup", user);
+                response.Wait();
+
+                if (response.Result.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return HttpNotFound();
+                }
+            }
+
+            return View(user); ;
+        }
 
         public class TokenResponse
         {
