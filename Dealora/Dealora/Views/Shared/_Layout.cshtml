@@ -23,10 +23,11 @@
                         <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                         <li>@Html.ActionLink("Shop", "Index", "Products", new { area = "" }, new { @class = "nav-link" })</li>
                         <li>@Html.ActionLink("Categories", "Index", "Categories", new { area = "" }, new { @class = "nav-link" })</li>
-                        @if (Session["Type"] == "Customer")
+                        @if (Session["Type"] != null && Session["Type"].ToString() == "Customer")
                         {
                             <li>@Html.ActionLink("Cart", "Index", "ShoppingCart", new { area = "" }, new { @class = "nav-link" })</li>
                         }
+
                         <li>@Html.ActionLink("Contact Us", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                     </ul>
 
@@ -37,8 +38,8 @@
                             <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
                         </form>
                     </div>
-                       
-                    
+
+
                     <!-- Right-align the partial view -->
                     <div class="ms-auto">
                         @Html.Partial("_PublicView")
@@ -56,7 +57,7 @@
             <p class="text-primary">&copy; @DateTime.Now.Year - Dealora</p>
         </footer>
     </div>
-
+    @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
