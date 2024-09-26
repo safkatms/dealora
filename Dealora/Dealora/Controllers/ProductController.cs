@@ -11,6 +11,7 @@ using Dealora.Context;
 using Dealora.Models;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.IO;
 
 namespace Dealora.Controllers
 {
@@ -101,7 +102,7 @@ namespace Dealora.Controllers
         }
 
         // GET: Product/Create
-        public ActionResult Create()
+        public async Task<ActionResult> Create()
         {
 
             if (Session["JWTToken"] != null)
@@ -109,10 +110,29 @@ namespace Dealora.Controllers
                 // Set the Authorization header with the JWT token
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
 
-                /*ViewBag.CategoryId = new SelectList(_dbContext.Categories, "Id", "Name", product.CategoryId);
-                ViewBag.UserId = new SelectList(_dbContext.Users, "Id", "FirstName", product.UserId);*/
-                ViewBag.CategoryId = new SelectList(_dbContext.Categories, "Id", "Name");
+
                 ViewBag.UserId = new SelectList(_dbContext.Users, "Id", "FirstName");
+
+                // Fetch categories through API
+                client.BaseAddress = new Uri(@"http://localhost:9570/api/");
+                var response = await client.GetAsync("categories");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var categories = await response.Content.ReadAsAsync<IEnumerable<Category>>();
+                    ViewBag.CategoryId = new SelectList(categories, "Id", "Name");
+                }
+                else
+                {
+                    return new HttpStatusCodeResult(response.StatusCode, "Unable to fetch categories.");
+                }
+
+                // Set the current logged-in user's ID in ViewBag
+               /* int userId = (int)Session["UserId"];
+                string firstName = (string)Session["Firstname"];
+
+                ViewBag.UserId = userId; // For hidden field
+                ViewBag.FirstName = firstName; //*/
                 return View();
             }
             else
@@ -125,12 +145,30 @@ namespace Dealora.Controllers
         // POST: Product/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(Product product)
+        public async Task<ActionResult> Create(Product product, HttpPostedFileBase ProductImage)
         {
             if (Session["JWTToken"] != null)
             {
                 try
                 {
+                    // Handle the image upload
+                    if (ProductImage != null && ProductImage.ContentLength > 0)
+                    {
+                        // Generate filename
+                        string fileName = Path.GetFileNameWithoutExtension(ProductImage.FileName);
+                        string extension = Path.GetExtension(ProductImage.FileName);
+                        fileName = fileName + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + extension;
+
+                        //Setpath 
+                        string path = Path.Combine(Server.MapPath("~/Product_Image"), fileName);
+
+                        // Save img in server
+                        ProductImage.SaveAs(path);
+
+                        //pass img urld in db
+                        product.ImageUrl = "/Product_Image/" + fileName;
+                    }
+
                     // Set the Authorization header with the JWT token
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
 
@@ -148,7 +186,7 @@ namespace Dealora.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "An unexpected error occurred.");
+                    return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "An unexpected error occurred: " + ex.Message);
                 }
             }
             else

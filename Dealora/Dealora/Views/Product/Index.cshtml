@@ -62,7 +62,14 @@
             @Html.DisplayFor(modelItem => item.StockQuantity)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.ImageUrl)
+            @if (!string.IsNullOrEmpty(item.ImageUrl))
+            {
+                <img src="@Url.Content(item.ImageUrl)" alt="Product Image" style="width: 50px; height: auto;" />
+            }
+            else
+            {
+                <p>No image available</p>
+            }
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.DateAdded)
@@ -71,9 +78,9 @@
             @Html.DisplayFor(modelItem => item.IsActive)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
         </td>
     </tr>
 }
