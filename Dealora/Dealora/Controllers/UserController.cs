@@ -57,51 +57,6 @@ namespace Dealora.Controllers
         }
 
 
-        // GET: User/Details/5
-        public async Task<ActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-
-            // Fetch JWT Token
-            if (Session["JWTToken"] != null)
-            {
-                try
-                {
-                    // Set the Authorization header with the JWT token
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
-
-                    // Call the API asynchronously to get the user details
-                    var response = await client.GetAsync($"users/{id}");
-
-                    // If the response is successful, process the user details
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var user = await response.Content.ReadAsAsync<User>();
-                        return View(user);
-                    }
-                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    {
-                        // If unauthorized, redirect to login
-                        return RedirectToAction("Login");
-                    }
-                    else
-                    {
-                        return new HttpStatusCodeResult(response.StatusCode, "Error retrieving user data.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    // Log the error and handle exceptions accordingly
-                    return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Error fetching user details.");
-                }
-            }
-
-            return RedirectToAction("Login");
-        }
-
 
         // GET: User/SignUp
         public ActionResult SignUp()
@@ -112,7 +67,7 @@ namespace Dealora.Controllers
         // POST: User/SignUp
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult SignUp(User user)
+        public ActionResult SignUp(SignUpModel user)
         {
             // Check if the email is already registered
             if (db.Users.Any(u => u.Email == user.Email))
@@ -305,11 +260,13 @@ namespace Dealora.Controllers
 
                     int userId = (int)Session["UserId"];
 
-                    var response = await client.PutAsJsonAsync($"api/Users/{userId}/ChangePassword", model);
+                    var response = await client.PutAsJsonAsync($"Users/ChangePassword/{userId}", model);
+                    var responseContent = await response.Content.ReadAsStringAsync(); // Get response content
+                    Console.WriteLine(responseContent); // Log response content
 
                     if (response.IsSuccessStatusCode)
                     {
-                        ViewBag.Message = "Password changed successfully!";
+                        TempData["Pass"] = "Password changed successfully!";
                         return RedirectToAction("UserProfile");
                     }
                     else if (response.StatusCode == HttpStatusCode.Unauthorized)
