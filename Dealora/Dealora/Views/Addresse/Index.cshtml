@@ -1,0 +1,55 @@
+﻿@model Dealora.Models.Address
+
+@{
+    ViewBag.Title = "Address Details";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        @Html.Partial("_Sidebar") <!-- Assuming you have a sidebar partial -->
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-body">
+                    <h2>Address Details</h2>
+
+                    @if (Model != null)
+                    {
+                        
+                            <div class="card-body">
+                                <h5 class="card-title">Street Address</h5>
+                                <p class="card-text">@Html.DisplayFor(model => model.StreetAddress)</p>
+
+                                <h5 class="card-title">City</h5>
+                                <p class="card-text">@Html.DisplayFor(model => model.City)</p>
+
+                                <!-- Edit & Delete Buttons -->
+                                <div class="row mt-3">
+                                    <div class="col-md-3">
+                                        <div class="d-flex flex-column">
+                                            <div class="mb-2">
+                                                @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-success w-100 btn-sm" })
+                                            </div>
+                                            <div>
+                                                @using (Html.BeginForm("Delete", "Addresse", FormMethod.Post))
+                                                {
+                                                    @Html.AntiForgeryToken()
+                                                    @Html.Hidden("id", Model.Id)
+                                                    <input type="submit" value="Delete" class="btn btn-danger w-100 btn-sm" onclick="return confirm('Are you sure you want to delete this address?');" />
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            No address found. @Html.ActionLink("Create New Address", "Create", null, new { @class = "btn btn-success" })
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

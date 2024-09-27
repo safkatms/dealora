@@ -4,7 +4,13 @@
     <ul class="nav navbar-nav">
         @if (Session["Type"] != null && Session["Type"].ToString() == "Customer")
         {
-            <li>@Html.ActionLink("Cart", "Index", "ShoppingCart", new { area = "" }, new { @class = "nav-link" })</li>
+            <li>
+                <a href="@Url.Action("Index", "ShoppingCart", new { area = "" })" class="nav-link">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="sr-only">Cart</span> <!-- For accessibility -->
+                </a>
+            </li>
+
         }
         <li>@Html.ActionLink("Welcome " + Session["Firstname"].ToString(), "UserProfile", "User", new { area = "" }, new { @class = "nav-link" })</li>
         <li>@Html.ActionLink("Logout", "Logout", "User", new { area = "" }, new { @class = "nav-link" })</li>
