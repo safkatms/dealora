@@ -1,0 +1,30 @@
+﻿@model Dealora.Models.Address
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+
+@using (Html.BeginForm("Create", "Addresse", FormMethod.Post, new { @class = "form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        @Html.LabelFor(m => m.StreetAddress, "Street Address")
+        @Html.TextBoxFor(m => m.StreetAddress, new { @class = "form-control", required = "required" })
+        @Html.ValidationMessageFor(m => m.StreetAddress, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="mb-3">
+        @Html.LabelFor(m => m.City, "City")
+        @Html.DropDownListFor(m => m.City, (SelectList)ViewBag.Cities, "Select a City", new { @class = "form-control", required = "required" })
+        @Html.ValidationMessageFor(m => m.City, "", new { @class = "text-danger" })
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create Address</button>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

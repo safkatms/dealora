@@ -219,6 +219,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Context\DealoraAppDbContext.cs" />
+    <Compile Include="Controllers\AddresseController.cs" />
+    <Compile Include="Controllers\API\AddressesController.cs" />
     <Compile Include="Controllers\API\CategoryController.cs" />
     <Compile Include="Controllers\API\DiscountsController.cs" />
     <Compile Include="Controllers\API\ProductsController.cs" />
@@ -252,6 +254,7 @@
     <Compile Include="Models\Shipping.cs" />
     <Compile Include="Models\ShoppingCart.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\ViewModel\AddressUpdateModel.cs" />
     <Compile Include="Models\ViewModel\CategoryViewModel.cs" />
     <Compile Include="Models\ViewModel\ChangePasswordViewModel.cs" />
     <Compile Include="Models\ViewModel\CreateUserViewModel.cs" />
@@ -688,11 +691,13 @@
     <Content Include="Views\Categories\Index.cshtml" />
     <Content Include="Views\Home\Unauthorized.cshtml" />
     <Content Include="Views\Discount\Index.cshtml" />
+    <Content Include="Views\Addresse\Create.cshtml" />
+    <Content Include="Views\Addresse\Edit.cshtml" />
+    <Content Include="Views\Addresse\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Product_Image\" />
-    <Folder Include="Views\Category\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
