@@ -4,11 +4,28 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Product Informations</h2>
 
+<script>
+    setTimeout(() => {
+        const box = document.getElementById('hide');
+        box.style.display = 'none';
+    }, 5000)
+</script>
+
+
+<h2>Product Informations</h2>
+<hr />
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-warning" })
 </p>
+
+@if (TempData["msgAdd"] != null)
+{
+    <div id="hide" , class="alert alert-success">
+        <strong>Good work !! </strong> @TempData["msgAdd"]
+    </div>
+}
+
 <table class="table table-hover table-bordered" id="ProductTable">
     <thead class="table-info">
         <tr>
@@ -45,47 +62,48 @@
     <tbody>
         @foreach (var item in Model)
         {
-           <tr class="table-secondary">
-               <td>
-                   @Html.DisplayFor(modelItem => item.Category.Name)
-               </td>
-               <td>
-                   @Html.DisplayFor(modelItem => item.User.FirstName)
-               </td>
-               <td>
-                   @Html.DisplayFor(modelItem => item.Name)
-               </td>
-               <td>
-                   @Html.DisplayFor(modelItem => item.Description)
-               </td>
-               <td>
-                   @Html.DisplayFor(modelItem => item.Price)
-               </td>
-               <td>
-                   @Html.DisplayFor(modelItem => item.StockQuantity)
-               </td>
-               <td>
-                   @if (!string.IsNullOrEmpty(item.ImageUrl))
-                   {
-                       <img src="@Url.Content(item.ImageUrl)" alt="Product Image" style="width: 50px; height: auto;" />
-                   }
-                   else
-                   {
-                       <p>No image available</p>
-                   }
-               </td>
-               <td>
-                   @Html.DisplayFor(modelItem => item.DateAdded)
-               </td>
-               <td>
-                   @Html.DisplayFor(modelItem => item.IsActive)
-               </td>
-               <td>
-                   @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                   @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                   @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-               </td>
-           </tr>
+            <tr class="table-secondary">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.User.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StockQuantity)
+                </td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                    {
+                        <img src="@Url.Content(item.ImageUrl)" alt="Product Image" style="width: 50px; height: auto;" />
+                    }
+                    else
+                    {
+                        <p>No image available</p>
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateAdded)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsActive)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "btn btn-warning" })
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }, new { @class = "btn btn-info" })
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "btn btn-danger" })
+                </td>
+
+            </tr>
         }
     </tbody>
 

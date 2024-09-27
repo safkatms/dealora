@@ -93,7 +93,7 @@ namespace Dealora.Controllers
 
                     if (response.IsSuccessStatusCode)
                     {
-                        return RedirectToAction("Index");
+                        return RedirectToAction("Create");
                     }
                     else
                     {

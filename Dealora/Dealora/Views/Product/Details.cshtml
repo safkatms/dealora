@@ -4,87 +4,58 @@
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
+<h2>Product Details</h2>
 
-<div>
-    <h4>Product</h4>
+<div class="container">
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Category.Name)
-        </dt>
-
-        <dd>
+    <div class="row">
+        <div class="col-md-6">
+            <strong>@Html.DisplayNameFor(model => model.Category.Name):</strong>
             @Html.DisplayFor(model => model.Category.Name)
-        </dd>
+        </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.User.FirstName)
-        </dt>
-
-        <dd>
+        <div class="col-md-6">
+            <strong>@Html.DisplayNameFor(model => model.User.FirstName):</strong>
             @Html.DisplayFor(model => model.User.FirstName)
-        </dd>
+        </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-
-        <dd>
+        <div class="col-md-6">
+            <strong>@Html.DisplayNameFor(model => model.Name):</strong>
             @Html.DisplayFor(model => model.Name)
-        </dd>
+        </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-
-        <dd>
+        <div class="col-md-6">
+            <strong>@Html.DisplayNameFor(model => model.Description):</strong>
             @Html.DisplayFor(model => model.Description)
-        </dd>
+        </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-
-        <dd>
+        <div class="col-md-6">
+            <strong>@Html.DisplayNameFor(model => model.Price):</strong>
             @Html.DisplayFor(model => model.Price)
-        </dd>
+        </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.StockQuantity)
-        </dt>
-
-        <dd>
+        <div class="col-md-6">
+            <strong>@Html.DisplayNameFor(model => model.StockQuantity):</strong>
             @Html.DisplayFor(model => model.StockQuantity)
-        </dd>
+        </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ImageUrl)
-        </dt>
-
-        <dd>
+        <div class="col-md-6">
+            <strong>@Html.DisplayNameFor(model => model.ImageUrl):</strong>
             @Html.DisplayFor(model => model.ImageUrl)
-        </dd>
+        </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.DateAdded)
-        </dt>
-
-        <dd>
+        <div class="col-md-6">
+            <strong>@Html.DisplayNameFor(model => model.DateAdded):</strong>
             @Html.DisplayFor(model => model.DateAdded)
-        </dd>
+        </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.IsActive)
-        </dt>
-
-        <dd>
+        <div class="col-md-6">
+            <strong>@Html.DisplayNameFor(model => model.IsActive):</strong>
             @Html.DisplayFor(model => model.IsActive)
-        </dd>
-
-    </dl>
+        </div>
+    </div>
 </div>
+<br />
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-warning" })
 </p>
