@@ -26,7 +26,7 @@
                     else if (Session["Type"].ToString() == "Customer")
                     {
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Address Book</a>
+                            @Html.ActionLink("Address Book", "Index", "Addresse", new { area = "" }, new { @class = "nav-link" })
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">My Orders</a>

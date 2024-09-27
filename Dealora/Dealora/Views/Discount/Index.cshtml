@@ -10,14 +10,23 @@
                     <div class="col-md-8">
                         <h4>Available Discounts</h4>
                         <div class="discount-list border">
-                            @foreach (var discount in Model.Discounts)
+                            @if (Model.Discounts != null && Model.Discounts.Any())
                             {
-                                <div class="card text-white bg-primary mb-3" style="max-width: 20rem;">
-                                    <div class="card-header">@discount.Code</div>
-                                    <div class="card-body">
-                                        <h4 class="card-title">@discount.DiscountPercentage%</h4>
-                                        <p class="card-text">@(discount.IsExpired() ? "Expired" : "Active")</p>
+                                foreach (var discount in Model.Discounts)
+                                {
+                                    <div class="card text-white bg-primary mb-3" style="max-width: 20rem;">
+                                        <div class="card-header">@discount.Code</div>
+                                        <div class="card-body">
+                                            <h4 class="card-title">@discount.DiscountPercentage%</h4>
+                                            <p class="card-text">@(discount.IsExpired() ? "Expired" : "Active")</p>
+                                        </div>
                                     </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="alert alert-info" role="alert">
+                                    No discounts available at the moment.
                                 </div>
                             }
                         </div>
