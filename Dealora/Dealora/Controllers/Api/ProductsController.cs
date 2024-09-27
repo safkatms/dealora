@@ -40,12 +40,24 @@ namespace Dealora.Controllers.API
         [Route("api/products/{id}")]
         public IHttpActionResult GetProduct(int id)
         {
+            //validation
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
             var product = _dbContext.Products.FirstOrDefault(p => p.Id == id);
 
             if (product == null)
                 return NotFound();
 
             return Ok(product);
+        }
+        //Get: by category id
+        [HttpGet]
+        [Route("api/products/category/{categoryId}")]
+        public IEnumerable<Product> GetProductsByCategoryId(int categoryId)
+        {
+            return _dbContext.Products.Where(p => p.CategoryId == categoryId).ToList();
         }
 
         //Add product
