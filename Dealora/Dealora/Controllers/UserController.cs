@@ -32,11 +32,11 @@ namespace Dealora.Controllers
         {
             if (Session["JWTToken"] != null)
             {
-                
+                    
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
 
                     var response = await client.GetAsync("users");
-
+                    
                     if (response.IsSuccessStatusCode)
                     {
                         var data = await response.Content.ReadAsAsync<IEnumerable<User>>();
@@ -44,7 +44,7 @@ namespace Dealora.Controllers
                     }
                     else if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
-                        return RedirectToAction("Login");
+                        return RedirectToAction("Unauthorized","Home");
                     }
                     else
                     {
@@ -82,7 +82,7 @@ namespace Dealora.Controllers
 
                 if (response.Result.IsSuccessStatusCode)
                 {
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Login");
                 }
                 else
                 {

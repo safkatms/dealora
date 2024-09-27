@@ -1,0 +1,60 @@
+﻿@model IEnumerable<Dealora.Models.Discount>
+
+@{
+    ViewBag.Title = "Discounts";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        @Html.Partial("_Sidebar")
+        <div class="col-md-9">
+            <div class="card">
+                <div class="row">
+                    <!-- List of Discounts -->
+                    <div class="col-md-8">
+                        <h4>Available Discounts</h4>
+                        <div class="discount-list border">
+                            @foreach (var discount in Model)
+                            {
+                                <div class="card text-white bg-primary mb-3" style="max-width: 20rem;">
+                                    <div class="card-header">@discount.Code</div>
+                                    <div class="card-body">
+                                        <h4 class="card-title">@discount.DiscountPercentage%</h4>
+                                        <p class="card-text">@(discount.IsExpired() ? "Expired" : "Active")</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- New Discount Form -->
+                    <div class="col-md-4">
+                        <h4>Create New Discount</h4>
+                        @using (Html.BeginForm("Create", "Discount", FormMethod.Post, new { @class = "form" }))
+                        {
+                            @Html.AntiForgeryToken()
+
+                            <div class="mb-3">
+                                @Html.LabelFor(m => m.First().Code, "Discount Code")
+                                @Html.TextBox("Code", null, new { @class = "form-control", required = "required" })
+                                @Html.ValidationMessage("Code", "", new { @class = "text-danger" })
+                            </div>
+                            <div class="mb-3">
+                                @Html.LabelFor(m => m.First().DiscountPercentage, "Discount Percentage")
+                                @Html.TextBox("DiscountPercentage", null, new { @class = "form-control", type = "number", min = "0", max = "100", required = "required" })
+                                @Html.ValidationMessage("DiscountPercentage", "", new { @class = "text-danger" })
+                            </div>
+                            <div class="mb-3">
+                                @Html.LabelFor(m => m.First().ExpiryDate, "Expiry Date")
+                                @Html.TextBox("ExpiryDate", null, new { @class = "form-control", type = "date", required = "required" })
+                                @Html.ValidationMessage("ExpiryDate", "", new { @class = "text-danger" })
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Create Discount</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
