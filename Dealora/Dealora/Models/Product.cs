@@ -35,6 +35,7 @@ namespace Dealora.Models
         public string ImageUrl { get; set; }
 
         [Required(ErrorMessage = "Date Added is required")]
+        [DataType(DataType.Date)]
         public DateTime DateAdded { get; set; }
 
         public bool IsActive { get; set; }

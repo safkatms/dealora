@@ -174,6 +174,8 @@ namespace Dealora.Controllers
 
                     if (response.IsSuccessStatusCode)
                     {
+                        TempData["msgAdd"] = "Product Information added sucessfully!";
+
                         return RedirectToAction("Index");
                     }
                     else
@@ -259,6 +261,8 @@ namespace Dealora.Controllers
 
                 if (response.IsSuccessStatusCode)
                 {
+                    TempData["msgAdd"] = "Product Information Updated sucessfully!";
+
                     return RedirectToAction("Index");
                 }
                 else
@@ -294,6 +298,7 @@ namespace Dealora.Controllers
                         return HttpNotFound();
                     }
 
+                    TempData["msgAdd"] = "Are you sure you want to delete this Product ?";
                     return View(product);
                 }
                 else
@@ -323,6 +328,7 @@ namespace Dealora.Controllers
 
                 if (response.IsSuccessStatusCode)
                 {
+                    TempData["msgAdd"] = "Product deleted sucessfully!";
                     return RedirectToAction("Index");
                 }
                 else
