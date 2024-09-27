@@ -2,6 +2,10 @@
 @if (Session["JWTToken"] != null)
 {
     <ul class="nav navbar-nav">
+        @if (Session["Type"] != null && Session["Type"].ToString() == "Customer")
+        {
+            <li>@Html.ActionLink("Cart", "Index", "ShoppingCart", new { area = "" }, new { @class = "nav-link" })</li>
+        }
         <li>@Html.ActionLink("Welcome " + Session["Firstname"].ToString(), "UserProfile", "User", new { area = "" }, new { @class = "nav-link" })</li>
         <li>@Html.ActionLink("Logout", "Logout", "User", new { area = "" }, new { @class = "nav-link" })</li>
     </ul>

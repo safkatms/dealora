@@ -32,11 +32,11 @@ namespace Dealora.Controllers
         {
             if (Session["JWTToken"] != null)
             {
-                
+                    
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
 
                     var response = await client.GetAsync("users");
-
+                    
                     if (response.IsSuccessStatusCode)
                     {
                         var data = await response.Content.ReadAsAsync<IEnumerable<User>>();
@@ -44,7 +44,7 @@ namespace Dealora.Controllers
                     }
                     else if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
-                        return RedirectToAction("Login");
+                        return RedirectToAction("Unauthorized","Home");
                     }
                     else
                     {
@@ -82,7 +82,7 @@ namespace Dealora.Controllers
 
                 if (response.Result.IsSuccessStatusCode)
                 {
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Login");
                 }
                 else
                 {
@@ -127,8 +127,15 @@ namespace Dealora.Controllers
                         Session["Type"] = jwtToken.Claims.First(c => c.Type == ClaimTypes.Role).Value;
 
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenResponse.token);
-
+                    if (Session["Type"].ToString() == "Admin")
+                    {
                         return RedirectToAction("Index");
+                    }
+                    else
+                    {
+
+                        return RedirectToAction("Index","Home");
+                    }
                     }
                     else if (response.StatusCode == HttpStatusCode.NotFound)
                     {
@@ -229,7 +236,6 @@ namespace Dealora.Controllers
         //Edit Profile
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("User/ChangePassword")]
         public async Task<ActionResult> EditProfile(UserUpdateModel model)
         {
 
@@ -284,7 +290,6 @@ namespace Dealora.Controllers
         // Post: User/ChangePassword
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("User/ChangePassword")]
         public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
         {
             
@@ -327,7 +332,6 @@ namespace Dealora.Controllers
         [HttpGet]
         public ActionResult Create()
         {
-            //ViewBag.Roles = Enum.GetValues(typeof(UserRole)).Cast<UserRole>().ToList();
             if (Session["JWTToken"] != null)
             {
                 return View();
@@ -363,6 +367,38 @@ namespace Dealora.Controllers
             }
 
             return View(user); ;
+        }
+
+        // Method to ban a user
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult BanUser(int id)
+        {
+            var user = db.Users.Find(id);
+            if (user != null)
+            {
+                user.IsActive = false; 
+                db.SaveChanges(); 
+                return RedirectToAction("Index");
+            }
+
+            return HttpNotFound();
+        }
+
+        // Method to unban a user
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UnbanUser(int id)
+        {
+            var user = db.Users.Find(id);
+            if (user != null)
+            {
+                user.IsActive = true; 
+                db.SaveChanges(); 
+                return RedirectToAction("Index"); 
+            }
+
+            return HttpNotFound();
         }
 
         public class TokenResponse

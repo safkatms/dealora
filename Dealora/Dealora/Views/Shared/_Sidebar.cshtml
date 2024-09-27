@@ -8,21 +8,38 @@
                 <ul class="nav flex-column">
                     <li class="nav-item">@Html.ActionLink("My Profile", "UserProfile", "User", new { area = "" }, new { @class = "nav-link" })</li>
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Address Book</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">My Payment Options</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Daraz Wallet</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">My Orders</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Sell on Daraz</a>
-                    </li>
+                    @if (Session["Type"].ToString() == "Admin")
+                    {
+                        <li class="nav-item">
+                            @Html.ActionLink("Home", "Index", "User", new { area = "" }, new { @class = "nav-link" })
+                        </li>
+                        <li class="nav-item">
+                            @Html.ActionLink("Create New User", "Create", "User", new { area = "" }, new { @class = "nav-link" })
+                        </li>
+                        <li class="nav-item">
+                            @Html.ActionLink("Coupon", "Index", "Discount", new { area = "" }, new { @class = "nav-link" })
+                        </li>
+                        <li class="nav-item">
+                            @Html.ActionLink("Category", "Index", "Categories", new { area = "" }, new { @class = "nav-link" })
+                        </li>
+                    }
+                    else if (Session["Type"].ToString() == "Customer")
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Address Book</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">My Orders</a>
+                        </li>
+                    }
+                    else
+                    {
+                <li class="nav-item">
+                    @Html.ActionLink("Product", "Index", "Product", new { area = "" }, new { @class = "nav-link" })
+                </li>
+                    }
+
+
                 </ul>
             </div>
         </div>
