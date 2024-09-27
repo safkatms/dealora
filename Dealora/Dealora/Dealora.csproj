@@ -255,6 +255,7 @@
     <Compile Include="Models\ViewModel\CategoryViewModel.cs" />
     <Compile Include="Models\ViewModel\ChangePasswordViewModel.cs" />
     <Compile Include="Models\ViewModel\CreateUserViewModel.cs" />
+    <Compile Include="Models\ViewModel\DiscountViewModel.cs" />
     <Compile Include="Models\ViewModel\LoginModel.cs" />
     <Compile Include="Models\ViewModel\SignUpModel.cs" />
     <Compile Include="Models\ViewModel\UserUpdateModel.cs" />
