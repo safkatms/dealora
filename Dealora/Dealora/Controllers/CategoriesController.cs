@@ -13,6 +13,7 @@ using System.Net.Http.Headers;
 using System.Net.Http;
 using System.Web.Configuration;
 using System.IO;
+using Dealora.Models.ViewModel;
 
 namespace Dealora.Controllers
 {
@@ -32,7 +33,8 @@ namespace Dealora.Controllers
             if (Session["JWTToken"] != null)
             {
                 try
-                {   // Set the Authorization header with the JWT token
+                {
+                    // Set the Authorization header with the JWT token
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
 
                     client.BaseAddress = new Uri(@"http://localhost:9570/api/");
@@ -63,15 +65,21 @@ namespace Dealora.Controllers
         }
 
         // GET: Categories/Create
-        public ActionResult Create()
+        public async Task<ActionResult> Create()
         {
-            return View();
+
+            var viewModel = new CategoryViewModel
+            {
+                Categories = await _dbContext.Categories.ToListAsync(),
+                NewCategory = new Category()
+            };
+            return View(viewModel);
         }
 
         // POST: Categories/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(Category category)
+        public async Task<ActionResult> Create(CategoryViewModel categoryViewModel)
         {
             if (Session["JWTToken"] != null)
             {
@@ -81,7 +89,7 @@ namespace Dealora.Controllers
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
 
                     client.BaseAddress = new Uri(@"http://localhost:9570/api/");
-                    var response = await client.PostAsJsonAsync("addcategories", category);
+                    var response = await client.PostAsJsonAsync("addcategories", categoryViewModel.NewCategory);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -101,6 +109,7 @@ namespace Dealora.Controllers
             {
                 return RedirectToAction("Login", "User");
             }
+
         }
         protected override void Dispose(bool disposing)
         {

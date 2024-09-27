@@ -241,6 +241,7 @@
     <Compile Include="Models\Shipping.cs" />
     <Compile Include="Models\ShoppingCart.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\ViewModel\CategoryViewModel.cs" />
     <Compile Include="Models\ViewModel\ChangePasswordViewModel.cs" />
     <Compile Include="Models\ViewModel\CreateUserViewModel.cs" />
     <Compile Include="Models\ViewModel\LoginModel.cs" />
