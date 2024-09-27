@@ -1,5 +1,6 @@
 ﻿using Dealora.Context;
 using Dealora.Models;
+using Dealora.Models.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -23,7 +24,6 @@ namespace Dealora.Controllers
             };
         }
 
-        // GET: Discounts
         public async Task<ActionResult> Index()
         {
             if (Session["JWTToken"] != null)
@@ -31,49 +31,53 @@ namespace Dealora.Controllers
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
 
                 var response = await client.GetAsync("discounts");
+
                 if (response.IsSuccessStatusCode)
                 {
-                    var data = await response.Content.ReadAsAsync<IEnumerable<Discount>>();
-                    return View(data);
+                    var discounts = await response.Content.ReadAsAsync<IEnumerable<Discount>>();
+                    var viewModel = new DiscountViewModel
+                    {
+                        Discounts = discounts,
+                        NewDiscount = new Discount() // Empty discount object for form binding
+                    };
+                    return View(viewModel);
                 }
-
-                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     return RedirectToAction("Unauthorized", "Home");
                 }
-
-                return new HttpStatusCodeResult(response.StatusCode, "Error retrieving data from API.");
+                else
+                {
+                    return new HttpStatusCodeResult(response.StatusCode, "Error retrieving data from API.");
+                }
             }
-
-            return RedirectToAction("Login", "User");
+            else
+            {
+                return RedirectToAction("Login", "User");
+            }
         }
 
-        // POST: Discounts/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(Discount discount)
+        public async Task<ActionResult> Create(DiscountViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var response = await client.PostAsJsonAsync("discounts", discount);
+                var response = await client.PostAsJsonAsync("discounts", model.NewDiscount);
+
                 if (response.IsSuccessStatusCode)
                 {
                     return RedirectToAction("Index");
                 }
-
-                // Handle API errors more explicitly
-                if (response.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    ModelState.AddModelError("", "Invalid data provided.");
-                }
                 else
                 {
-                    return new HttpStatusCodeResult(response.StatusCode, "Error creating discount.");
+                    return HttpNotFound();
                 }
             }
 
-            return View(discount);
+            return View("Index", model);
         }
+
 
         // Dispose HttpClient
         protected override void Dispose(bool disposing)
