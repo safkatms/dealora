@@ -35,17 +35,15 @@ namespace Dealora.Controllers
                 // Set Authorization header with JWT token
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
 
-                // Assuming userId is stored in the session
+           
                 int userId = (int)Session["UserId"];
 
-                // Call the API to get the single address by userId
                 var response = await client.GetAsync($"Addresses/{userId}");
 
                 if (response.IsSuccessStatusCode)
                 {
-                    // Deserialize the response to a single Address object
                     var address = await response.Content.ReadAsAsync<Address>();
-                    return View(address);  // Pass the single address to the view
+                    return View(address);
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
@@ -72,20 +70,11 @@ namespace Dealora.Controllers
         {
             if (Session["JWTToken"] != null)
             {
-                var cities = new List<string>
-        {
-            "Dhaka",
-            "Chittagong",
-            "Khulna",
-            "Rajshahi",
-            "Sylhet",
-            "Barisal",
-            "Rangpur",
-            "Comilla",
-            "Mymensingh"
-        };
-
-                ViewBag.Cities = new SelectList(cities);
+                if (Session["Type"].ToString() != "Customer")
+                {
+                    return RedirectToAction("Unauthorized", "Home");
+                }
+                ViewBag.Cities = new SelectList(GetCities());
                 return View();
             }
             else
@@ -127,6 +116,7 @@ namespace Dealora.Controllers
         }
 
 
+
         private List<string> GetCities()
         {
             return new List<string>
@@ -158,7 +148,10 @@ namespace Dealora.Controllers
                 {
                     return HttpNotFound();
                 }
-
+                if (Session["Type"].ToString() != "Customer" || (int)Session["UserId"] != address.User.Id)
+                {
+                    return RedirectToAction("Unauthorized", "Home");
+                }
                 // Map the Address entity to AddressUpdateModel
                 var addressViewModel = new AddressUpdateModel
                 {

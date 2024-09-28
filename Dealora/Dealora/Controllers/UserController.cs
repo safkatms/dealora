@@ -220,7 +220,7 @@ namespace Dealora.Controllers
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    return RedirectToAction("Login");
+                    return RedirectToAction("Unauthorized", "Home");
                 }
                 else
                 {
@@ -301,7 +301,6 @@ namespace Dealora.Controllers
 
                     var response = await client.PutAsJsonAsync($"Users/ChangePassword/{userId}", model);
                     var responseContent = await response.Content.ReadAsStringAsync(); 
-                    Console.WriteLine(responseContent); 
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -334,6 +333,10 @@ namespace Dealora.Controllers
         {
             if (Session["JWTToken"] != null)
             {
+                if (Session["Type"].ToString() != "Admin")
+                {
+                    return RedirectToAction("Unauthorized", "Home");
+                }
                 return View();
             }
             else

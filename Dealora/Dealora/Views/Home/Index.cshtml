@@ -1,6 +1,9 @@
-﻿@{
+﻿@model IEnumerable<Dealora.Models.Product>
+
+@{
     ViewBag.Title = "Home Page";
 }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-loadmore/1.0.0/jquery.loadmore.min.js"></script>
 
 <main>
     <div class="container">
@@ -79,48 +82,23 @@
         <div class="products-section">
             <h2>Products</h2>
             <div class="row">
-                <!-- Dummy Products -->
-                <div class="col-md-3">
-                    <div class="card">
-                        <img class="card-img-top" src="https://via.placeholder.com/200" alt="Product 1">
-                        <div class="card-body">
-                            <h5 class="card-title">Product 1</h5>
-                            <p class="card-text">$100.00</p>
-                            <a href="#" class="btn btn-primary">Buy Now</a>
+                @foreach (var product in Model)
+                {
+                    <div class="col-md-3 d-flex align-items-stretch">
+                        <!-- Ensures all cards stretch to the same height -->
+                        <div class="card h-100">
+                            <!-- h-100 makes the card take full height -->
+                            <img class="card-img-top" src="@(!string.IsNullOrEmpty(product.ImageUrl) ? product.ImageUrl : "https://via.placeholder.com/200")" alt="@product.Name">
+                            <div class="card-body d-flex flex-column">
+                                <!-- Flex column for vertical alignment -->
+                                <h5 class="card-title">@product.Name</h5>
+                                <p class="card-text">$@product.Price.ToString("F2")</p>
+                                <a href="#" class="btn btn-primary mt-auto">Add To Cart</a> <!-- mt-auto pushes the button to the bottom -->
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card">
-                        <img class="card-img-top" src="https://via.placeholder.com/200" alt="Product 2">
-                        <div class="card-body">
-                            <h5 class="card-title">Product 2</h5>
-                            <p class="card-text">$200.00</p>
-                            <a href="#" class="btn btn-primary">Buy Now</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card">
-                        <img class="card-img-top" src="https://via.placeholder.com/200" alt="Product 3">
-                        <div class="card-body">
-                            <h5 class="card-title">Product 3</h5>
-                            <p class="card-text">$150.00</p>
-                            <a href="#" class="btn btn-primary">Buy Now</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card">
-                        <img class="card-img-top" src="https://via.placeholder.com/200" alt="Product 4">
-                        <div class="card-body">
-                            <h5 class="card-title">Product 4</h5>
-                            <p class="card-text">$180.00</p>
-                            <a href="#" class="btn btn-primary">Buy Now</a>
-                        </div>
-                    </div>
-                </div>
+                }
             </div>
+
         </div>
-    </div>
 </main>
