@@ -1,11 +1,15 @@
 ﻿using Dealora.Context;
 using Dealora.Models;
+using Dealora.Models.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Http;
+
+
 
 
 namespace Dealora.Controllers.API
@@ -29,12 +33,14 @@ namespace Dealora.Controllers.API
         }
 
         //Get: Returnproducts spec user
+        [Authorize(Roles = "Seller")]
         [HttpGet]
         [Route("api/products/userId/{userId}")]
         public IEnumerable<Product> GetProductsByUserId(int userId)
         {
             return _dbContext.Products.Where(p => p.UserId == userId).ToList();
         }
+
         // GET: api/products/{id}
         [HttpGet]
         [Route("api/products/{id}")]
@@ -59,6 +65,7 @@ namespace Dealora.Controllers.API
         {
             return _dbContext.Products.Where(p => p.CategoryId == categoryId).ToList();
         }
+
 
         //Add product
         [Route("api/addproduct")]
@@ -124,6 +131,8 @@ namespace Dealora.Controllers.API
 
             return Ok(product);
         }
+
+        //delete product
         [Route("api/deleteproduct/{id}")]
         [HttpDelete]
         public IHttpActionResult DeleteProduct(int id) 
@@ -141,8 +150,62 @@ namespace Dealora.Controllers.API
         }
 
 
+        /*//showw all product order details
+        [HttpGet]
+        [Route("api/seller/{userId}")]
+        public IEnumerable<Order> GetOrdersBySeller(int userId)
+        {
+            // Get the products that belong to the seller
+            var products = _dbContext.Products.Where(p => p.UserId == userId).Select(p => p.Id).ToList();
 
+            // Get the orders for those products
+            var orderItems = _dbContext.OrderItems
+                .Where(oi => products.Contains(oi.ProductId))
+                .Select(oi => oi.OrderId)
+                .Distinct()
+                .ToList();
+
+            var orders = _dbContext.Orders.Where(o => orderItems.Contains(o.Id)).ToList();
+
+            return orders;  
+        }*/
+
+
+        [HttpGet]
+        [Route("api/seller/orders/{userId}")]
+        public IEnumerable<OrderDeatilsViewModel> GetOrdersBySeller(int userId)
+        {
+            // Get the products that belong to the seller
+            var productIds = _dbContext.Products
+                .Where(p => p.UserId == userId)
+                .Select(p => p.Id)
+                .ToList();
+
+            // Get the order IDs for those products
+            var orderIds = _dbContext.OrderItems
+                .Where(oi => productIds.Contains(oi.ProductId))
+                .Select(oi => oi.OrderId)
+                .Distinct()
+                .ToList();
+
+            // Retrieve the orders that match those IDs, including order items
+            var orders = _dbContext.Orders
+                .Where(o => orderIds.Contains(o.Id))
+                .ToList();
+
+            // Create a list of OrderDetailsViewModel
+            var orderDetailsList = orders.Select(order => new OrderDeatilsViewModel
+            {
+                Order = order,
+                OrderItems = _dbContext.OrderItems
+                    .Where(oi => oi.OrderId == order.Id)
+                    .ToList() // Get the associated order items for this order
+            }).ToList();
+
+            return orderDetailsList;  // Return the list of order details view models
+        }
 
 
     }
+
 }
