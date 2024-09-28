@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Dealora.Models.Product>
+﻿@model Dealora.Models.ViewModel.HomeViewModel
 
 @{
     ViewBag.Title = "Home Page";
@@ -46,43 +46,33 @@
             </button>
         </div>
 
-        <!-- Categories Section -->
         <div class="categories-section my-4">
             <h2>Categories</h2>
             <div class="row">
-                <!-- Dummy categories -->
-                <div class="col-md-3">
-                    <div class="category-card">
-                        <img src="https://via.placeholder.com/150" alt="Electronics">
-                        <h5>Electronics</h5>
+                @foreach (var category in Model.Categories)
+                {
+                    <div class="col-md-3">
+                        <a href="/category/@category.Id" class="text-decoration-none">
+                            <!-- The entire card is now a clickable link -->
+                            <div class="card text-center rounded-circle p-3 category-card">
+                                <img class="card-img-top rounded-circle mx-auto"
+                                     src="@(!string.IsNullOrEmpty(category.CategoryImageUrl) ? category.CategoryImageUrl : "https://via.placeholder.com/150")"
+                                     alt="@category.Name">
+                            </div>
+                        </a>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="category-card">
-                        <img src="https://via.placeholder.com/150" alt="Fashion">
-                        <h5>Fashion</h5>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="category-card">
-                        <img src="https://via.placeholder.com/150" alt="Home Appliances">
-                        <h5>Home Appliances</h5>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="category-card">
-                        <img src="https://via.placeholder.com/150" alt="Books">
-                        <h5>Books</h5>
-                    </div>
-                </div>
+                }
             </div>
         </div>
+
+
+
 
         <!-- Products Section -->
         <div class="products-section">
             <h2>Products</h2>
             <div class="row">
-                @foreach (var product in Model)
+                @foreach (var product in Model.Products)
                 {
                     <div class="col-md-3 d-flex align-items-stretch">
                         <!-- Ensures all cards stretch to the same height -->

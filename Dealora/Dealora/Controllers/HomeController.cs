@@ -8,6 +8,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Dealora.Models.ViewModel;
 
 namespace Dealora.Controllers
 {
@@ -27,23 +28,37 @@ namespace Dealora.Controllers
         }
 
 
-        // GET: User
+        // GET: Home
         public async Task<ActionResult> Index()
         {
+            // Fetch Products and Categories from API
+            var response1 = await client.GetAsync("Products");
+            var response2 = await client.GetAsync("Categories");
 
-                var response = await client.GetAsync("products");
+            // Check if both requests were successful
+            if (response1.IsSuccessStatusCode && response2.IsSuccessStatusCode)
+            {
+                // Read the content of the responses
+                var products = await response1.Content.ReadAsAsync<IEnumerable<Product>>();
+                var categories = await response2.Content.ReadAsAsync<IEnumerable<Category>>();
 
-                if (response.IsSuccessStatusCode)
+                // Create ViewModel to pass to the View
+                var viewModel = new HomeViewModel
                 {
-                    var data = await response.Content.ReadAsAsync<IEnumerable<Product>>();
-                    return View(data);
-                }
-                else
-                {
-                    return new HttpStatusCodeResult(response.StatusCode, "Error retrieving data from API.");
-                }
-            
+                    Products = products,
+                    Categories = categories
+                };
+
+                // Return the View with the ViewModel
+                return View(viewModel);
+            }
+            else
+            {
+                // If any of the API calls fail, return an error
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Error retrieving data from API.");
+            }
         }
+
 
         public ActionResult About()
         {
