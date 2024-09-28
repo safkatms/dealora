@@ -116,7 +116,7 @@ namespace Dealora.Controllers.API
             existingProduct.Price = product.Price;
             existingProduct.StockQuantity = product.StockQuantity;
             existingProduct.IsActive = product.IsActive;
-            existingProduct.ImageUrl = product.ImageUrl;
+            /*existingProduct.ImageUrl = product.ImageUrl;*/
             existingProduct.CategoryId = product.CategoryId;
 
 
