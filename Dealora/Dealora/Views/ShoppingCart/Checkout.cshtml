@@ -1,0 +1,72 @@
+﻿@model Dealora.Models.ViewModel.CheckoutViewModel
+
+<h2>Checkout</h2>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<div class="checkout-form">
+    <form asp-action="Checkout" method="post">
+        <!-- Cart Items Summary -->
+        <h4>Order Summary</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.CartItems)
+                {
+                    <tr>
+                        <td>@item.Product.Name</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.Product.Price.ToString("F2")</td>
+                        <td>@((item.Quantity * item.Product.Price).ToString("F2"))</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Total Amount before discount -->
+        <h4>Subtotal: $@Model.TotalAmount.ToString("F2")</h4>
+
+        <!-- Discount Code -->
+        <div class="form-group">
+            <label for="discountCode">Discount Code</label>
+            <input type="text" id="discountCode" name="DiscountCode" class="form-control" placeholder="Enter discount code" />
+        </div>
+
+        <!-- Address Selection -->
+        <div class="form-group">
+            <label for="address">Select Address</label>
+            <select id="address" name="AddressId" class="form-control" required>
+                <option value="">--Select Address--</option>
+                @foreach (var address in Model.Addresses)
+                {
+                    <option value="@address.Id">@address.StreetAddress, @address.City</option>
+                }
+            </select>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="form-group">
+            <label for="paymentMethod">Payment Method</label>
+            <select id="paymentMethod" name="PaymentMethod" class="form-control" required>
+                <option value="">--Select Payment Method--</option>
+                <option value="0">Credit Card</option>
+                <option value="1">PayPal</option>
+            </select>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary">Place Order</button>
+    </form>
+</div>

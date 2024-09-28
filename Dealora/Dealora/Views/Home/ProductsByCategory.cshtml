@@ -25,7 +25,10 @@
                             <!-- Flex column for vertical alignment -->
                             <h5 class="card-title">@product.Name</h5>
                             <p class="card-text">$@product.Price.ToString("F2")</p>
-                            <a href="#" class="btn btn-primary mt-auto">Add To Cart</a> <!-- mt-auto pushes the button to the bottom -->
+                            <!-- Add To Cart link -->
+                            <a href="@Url.Action("AddToCart", "ShoppingCart", new { productId = product.Id, quantity = 1 })"
+                               class="btn btn-primary mt-auto"
+                               onclick="updateAddToCartLink(@product.Id)">Add To Cart</a>
                         </div>
                     </div>
                 </div>
