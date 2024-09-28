@@ -12,6 +12,7 @@ using Dealora.Models;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.IO;
+using Dealora.Models.ViewModel;
 
 namespace Dealora.Controllers
 {
@@ -47,7 +48,7 @@ namespace Dealora.Controllers
                     }
                     else if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
-                        return RedirectToAction("Login","User");
+                        return RedirectToAction("Unauthorized", "Home");
                     }
                     else
                       return HttpNotFound();
@@ -72,6 +73,11 @@ namespace Dealora.Controllers
             {
                 try
                 {
+                    if (Session["Type"].ToString() != "Seller")
+                    {
+                        return RedirectToAction("Unauthorized", "Home");
+                    }
+
                     // Set the Authorization header with the JWT token
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
 
@@ -85,7 +91,7 @@ namespace Dealora.Controllers
                     }
                     else if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
-                        return RedirectToAction("Login", "User");
+                        return RedirectToAction("Unauthorized", "Home");
                     }
                     else
                     return HttpNotFound();
@@ -109,6 +115,11 @@ namespace Dealora.Controllers
 
             if (Session["JWTToken"] != null)
             {
+                if (Session["Type"].ToString() != "Seller")
+                {
+                    return RedirectToAction("Unauthorized", "Home");
+                }
+
                 // Set the Authorization header with the JWT token
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
 
@@ -199,6 +210,10 @@ namespace Dealora.Controllers
         {
             if (Session["JWTToken"] != null)
             {
+                if (Session["Type"].ToString() != "Seller")
+                {
+                    return RedirectToAction("Unauthorized", "Home");
+                }
                 // Set the Authorization header with the JWT token
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
 
@@ -282,6 +297,11 @@ namespace Dealora.Controllers
         {
             if (Session["JWTToken"] != null)
             {
+                if (Session["Type"].ToString() != "Seller")
+                {
+                    return RedirectToAction("Unauthorized", "Home");
+                }
+
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
 
                 client.BaseAddress = new Uri(@"http://localhost:9570/api/");
@@ -342,6 +362,50 @@ namespace Dealora.Controllers
 
 
         }
+
+        public async Task<ActionResult> SellerOrders()
+        {
+            if (Session["JWTToken"] != null)
+            {
+                try
+                {
+                    // Set the Authorization header with the JWT token
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
+
+                    int userId = (int)Session["UserId"];
+
+                    client.BaseAddress = new Uri(@"http://localhost:9570/");
+
+                    var response = await client.GetAsync($"api/seller/orders/{userId}");
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var data = await response.Content.ReadAsAsync<IEnumerable<OrderDeatilsViewModel>>();
+
+                        return View(data);
+                    }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        return RedirectToAction("Unauthorized", "Home");
+                    }
+                    else
+                    {
+                        return HttpNotFound();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Error occurred while fetching orders: " + ex.Message);
+                }
+            }
+            else
+            {
+                return RedirectToAction("Login", "User");
+            }
+        }
+
+
+
 
         protected override void Dispose(bool disposing)
         {
