@@ -266,6 +266,7 @@
     <Compile Include="Models\ViewModel\AddressUpdateModel.cs" />
     <Compile Include="Models\ViewModel\CategoryViewModel.cs" />
     <Compile Include="Models\ViewModel\ChangePasswordViewModel.cs" />
+    <Compile Include="Models\ViewModel\CheckoutViewModel.cs" />
     <Compile Include="Models\ViewModel\CreateUserViewModel.cs" />
     <Compile Include="Models\ViewModel\DiscountViewModel.cs" />
     <Compile Include="Models\ViewModel\HomeViewModel.cs" />
@@ -707,7 +708,12 @@
     <Content Include="Views\Addresse\Index.cshtml" />
     <Content Include="Views\Home\ProductsByCategory.cshtml" />
     <Content Include="Views\ShoppingCart\Index.cshtml" />
+
     <Content Include="Views\Product\SellerOrders.cshtml" />
+
+    <Content Include="Views\ShoppingCart\Checkout.cshtml" />
+    <Content Include="Views\ShoppingCart\OrderConfirmation.cshtml" />
+
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
