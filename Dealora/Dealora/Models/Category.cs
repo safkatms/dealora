@@ -17,6 +17,10 @@ namespace Dealora.Models
         [StringLength(500, ErrorMessage = "Description cannot be longer than 500 characters")]
         public string Description { get; set; }  // Optional
 
+        [Display(Name = "Image")]
+        [StringLength(500, ErrorMessage = "Image URL cannot exceed 500 characters")]
+        public string CategoryImageUrl { get; set; }
+
 
     }
 }
