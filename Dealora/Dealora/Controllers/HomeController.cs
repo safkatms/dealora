@@ -59,6 +59,26 @@ namespace Dealora.Controllers
             }
         }
 
+        // GET: Products by Category
+        public async Task<ActionResult> ProductsByCategory(int categoryId)
+        {
+            // Make an API call to get products by category ID
+            var response = await client.GetAsync($"products/category/{categoryId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var products = await response.Content.ReadAsAsync<IEnumerable<Product>>();
+                return View(products); // Return the products to the view
+            }
+            else
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Error retrieving data from API.");
+            }
+        }
+
+
+
+
 
         public ActionResult About()
         {
