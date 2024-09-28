@@ -12,7 +12,7 @@ namespace Dealora.Models
         public string Code { get; set; }
 
         [Required(ErrorMessage = "Discount Percentage is required")]
-        [Range(0, 100, ErrorMessage = "Discount Percentage must be between 0 and 100")]
+        [Range(1, 100, ErrorMessage = "Discount Percentage must be between 1 and 100")]
         public double DiscountPercentage { get; set; }
 
         [Required(ErrorMessage = "Expiry Date is required")]
