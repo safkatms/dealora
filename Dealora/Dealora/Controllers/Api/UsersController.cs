@@ -53,7 +53,7 @@ namespace Dealora.Controllers.API
             return CreatedAtRoute("UserSignup", new { id = user.Id }, user);
         }
 
-        
+
 
 
         //view profile
@@ -72,6 +72,7 @@ namespace Dealora.Controllers.API
         }
 
         //update profile
+     
         [Route("api/Users/Update/{id}")]
         [HttpPut]
         public IHttpActionResult UpdateUsers(int id, [FromBody] UserUpdateModel user)
@@ -94,6 +95,7 @@ namespace Dealora.Controllers.API
 
             return Ok();
         }
+
 
         [HttpPut]
         [Route("api/Users/ChangePassword/{id}")]
