@@ -20,6 +20,10 @@ namespace Dealora.Controllers
         }
         public async Task<ActionResult> Index()
         {
+            if (Session["Type"].ToString() != "Customer")
+            {
+                return RedirectToAction("Unauthorized", "Home");
+            }
             var userId = Session["UserId"] != null ? (int)Session["UserId"] : 0;
 
             if (userId == 0)
@@ -115,6 +119,7 @@ namespace Dealora.Controllers
         [HttpGet]
         public async Task<ActionResult> UpdateQuantity(int id, int quantity)
         {
+            
             // Validate quantity
             if (quantity < 1)
             {
