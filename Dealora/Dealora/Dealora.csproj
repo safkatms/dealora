@@ -229,6 +229,7 @@
     <Compile Include="Controllers\DiscountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
+    <Compile Include="Controllers\ShoppingCartController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -265,6 +266,7 @@
     <Compile Include="Models\ViewModel\DiscountViewModel.cs" />
     <Compile Include="Models\ViewModel\HomeViewModel.cs" />
     <Compile Include="Models\ViewModel\LoginModel.cs" />
+    <Compile Include="Models\ViewModel\ShoppingCartViewModel.cs" />
     <Compile Include="Models\ViewModel\SignUpModel.cs" />
     <Compile Include="Models\ViewModel\UserUpdateModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -693,12 +695,13 @@
     <Content Include="Views\User\EditProfile.cshtml" />
     <Content Include="Views\User\ChangePassword.cshtml" />
     <Content Include="Views\Categories\Create.cshtml" />
-    <Content Include="Views\Categories\Index.cshtml" />
     <Content Include="Views\Home\Unauthorized.cshtml" />
     <Content Include="Views\Discount\Index.cshtml" />
     <Content Include="Views\Addresse\Create.cshtml" />
     <Content Include="Views\Addresse\Edit.cshtml" />
     <Content Include="Views\Addresse\Index.cshtml" />
+    <Content Include="Views\Home\ProductsByCategory.cshtml" />
+    <Content Include="Views\ShoppingCart\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

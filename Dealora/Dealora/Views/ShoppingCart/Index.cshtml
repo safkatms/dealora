@@ -1,0 +1,70 @@
+﻿@model Dealora.Models.ViewModel.ShoppingCartViewModel
+
+<div class="shopping-cart">
+    <h2>Your Shopping Cart</h2>
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    @if (Model.CartItems == null || !Model.CartItems.Any())
+    {
+        <div class="alert alert-danger" role="alert">
+            Your shopping cart is empty.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.CartItems)
+                    {
+                        <tr>
+                            <td>@item.Product.Name</td>
+                            <td>
+                                <!-- Input for quantity -->
+                                <input type="number" id="quantity_@item.Id" value="@item.Quantity" min="1" class="form-control" />
+                            </td>
+                            <td>$@item.Product.Price.ToString("F2")</td>
+                            <td>$@((item.Quantity * item.Product.Price).ToString("F2"))</td>
+                            <td>
+                                <!-- Update button -->
+                                <a href="@Url.Action("UpdateQuantity", "ShoppingCart", new { id = item.Id, quantity = item.Quantity })" class="btn btn-primary" onclick="updateQuantity(@item.Id)">Update</a>
+                                <a href="@Url.Action("RemoveFromCart", "ShoppingCart", new { id = item.Id })" class="btn btn-danger">Remove</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="total-amount">
+            <h4>Total Amount: $@Model.TotalAmount.ToString("F2")</h4>
+        </div>
+    }
+</div>
+
+<script>
+    function updateQuantity(itemId) {
+        // Get the quantity from the input field
+        var quantity = document.getElementById('quantity_' + itemId).value;
+
+        // Update the link for the Update button
+        var link = document.querySelector('a[href*="UpdateQuantity"][href*="' + itemId + '"]');
+        link.href = '@Url.Action("UpdateQuantity", "ShoppingCart", new { id = "__itemId__", quantity = "__quantity__" })'
+            .replace('__itemId__', itemId)
+            .replace('__quantity__', quantity);
+    }
+</script>

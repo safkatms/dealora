@@ -20,7 +20,7 @@
                             @Html.ActionLink("Coupon", "Index", "Discount", new { area = "" }, new { @class = "nav-link" })
                         </li>
                         <li class="nav-item">
-                            @Html.ActionLink("Category", "Index", "Categories", new { area = "" }, new { @class = "nav-link" })
+                            @Html.ActionLink("Category", "Create", "Categories", new { area = "" }, new { @class = "nav-link" })
                         </li>
                     }
                     else if (Session["Type"].ToString() == "Customer")
