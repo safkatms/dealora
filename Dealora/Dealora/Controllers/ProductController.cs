@@ -202,35 +202,36 @@ namespace Dealora.Controllers
                 // Set the Authorization header with the JWT token
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
 
-                // Fetch categories through API
+                // Fetch product for view
                 client.BaseAddress = new Uri(@"http://localhost:9570/api/");
-                var response = await client.GetAsync("categories");
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var categories = await response.Content.ReadAsAsync<IEnumerable<Category>>();
-                    ViewBag.CategoryId = new SelectList(categories, "Id", "Name");
-                }
-                else
-                {
-                    return new HttpStatusCodeResult(response.StatusCode, "Unable to fetch categories.");
-                }
-
-                TempData["UserId"] = (int)Session["UserId"];
-                TempData["FirstName"] = (string)Session["FirstName"];
-
-                //fetch product for view
                 var productResponse = await client.GetAsync("products/" + id.ToString());
 
                 if (productResponse.IsSuccessStatusCode)
                 {
-                    // Read as a single product
+                    // Read single product
                     var product = await productResponse.Content.ReadAsAsync<Product>();
 
                     if (product == null)
                     {
                         return HttpNotFound();
                     }
+
+                    // Fetch categories through API
+                    var response = await client.GetAsync("categories");
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var categories = await response.Content.ReadAsAsync<IEnumerable<Category>>();
+
+                        ViewBag.CategoryId = new SelectList(categories, "Id", "Name", product.CategoryId);
+                    }
+                    else
+                    {
+                        return new HttpStatusCodeResult(response.StatusCode, "Unable to fetch categories.");
+                    }
+
+                    TempData["UserId"] = (int)Session["UserId"];
+                    TempData["FirstName"] = (string)Session["FirstName"];
 
                     return View(product);
                 }
@@ -243,7 +244,6 @@ namespace Dealora.Controllers
             {
                 return RedirectToAction("Login", "User");
             }
-
         }
 
         // POST: Product/Edit/5
@@ -274,7 +274,6 @@ namespace Dealora.Controllers
             {
                 return RedirectToAction("Login", "User");
             }
-
 
         }
 

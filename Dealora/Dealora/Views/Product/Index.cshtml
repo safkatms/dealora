@@ -16,7 +16,7 @@
 <h2>Product Informations</h2>
 <hr />
 <p>
-    @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-warning" })
+    @Html.ActionLink("Create New Product", "Create", null, new { @class = "btn btn-success" })
 </p>
 
 @if (TempData["msgAdd"] != null)
@@ -98,10 +98,19 @@
                     @Html.DisplayFor(modelItem => item.IsActive)
                 </td>
                 <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "btn btn-warning" })
-                    @Html.ActionLink("Details", "Details", new { id = item.Id }, new { @class = "btn btn-info" })
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "btn btn-danger" })
+                    <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-warning btn-sm p-1" title="Edit" style="width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; ">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+
+                    <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-info btn-sm p-1" title="Details" style="width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; ">
+                        <i class="bi bi-info-circle"></i>
+                    </a>
+
+                    <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-danger btn-sm p-1" title="Delete" style="width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; ">
+                        <i class="bi bi-trash"></i>
+                    </a>
                 </td>
+
 
             </tr>
         }
@@ -115,6 +124,9 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+
 
     <script>
         $(document).ready(function () {

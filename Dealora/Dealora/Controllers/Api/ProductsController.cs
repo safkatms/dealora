@@ -117,7 +117,7 @@ namespace Dealora.Controllers.API
             existingProduct.StockQuantity = product.StockQuantity;
             existingProduct.IsActive = product.IsActive;
             existingProduct.ImageUrl = product.ImageUrl;
-            existingProduct.DateAdded = product.DateAdded;
+            existingProduct.CategoryId = product.CategoryId;
 
 
             _dbContext.SaveChanges();
@@ -139,5 +139,10 @@ namespace Dealora.Controllers.API
 
             return Ok(existingProduct);
         }
+
+
+
+
+
     }
 }

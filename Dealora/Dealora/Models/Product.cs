@@ -8,13 +8,16 @@ namespace Dealora.Models
     {
         public int Id { get; set; }
 
+        
         [Required(ErrorMessage = "Product Name is required")]
         [StringLength(100, ErrorMessage = "Product Name cannot exceed 100 characters")]
         public string Name { get; set; }
 
+        [Display(Name = "Description")]
         [StringLength(1000, ErrorMessage = "Description cannot exceed 1000 characters")]
         public string Description { get; set; }
 
+        [Display(Name = "Price")]
         [Required(ErrorMessage = "Price is required")]
         [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
         public double Price { get; set; }
@@ -31,6 +34,7 @@ namespace Dealora.Models
         [Range(0, int.MaxValue, ErrorMessage = "Stock Quantity must be a non-negative number")]
         public int StockQuantity { get; set; }
 
+        [Display(Name = "Image")]
         [StringLength(500, ErrorMessage = "Image URL cannot exceed 500 characters")]
         public string ImageUrl { get; set; }
 

@@ -79,12 +79,31 @@ namespace Dealora.Controllers
         // POST: Categories/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(CategoryViewModel categoryViewModel)
+        public async Task<ActionResult> Create(CategoryViewModel categoryViewModel, HttpPostedFileBase CategoryImage)
         {
             if (Session["JWTToken"] != null)
             {
                 try
                 {
+                    // Handle the image upload
+                    if (CategoryImage != null && CategoryImage.ContentLength > 0)
+                    {
+                        // Generate filename
+                        string fileName = Path.GetFileNameWithoutExtension(CategoryImage.FileName);
+                        string extension = Path.GetExtension(CategoryImage.FileName);
+                        fileName = fileName + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + extension;
+
+                        //Setpath 
+                        string path = Path.Combine(Server.MapPath("~/Product_Image"), fileName);
+
+                        // Save img in server
+                        CategoryImage.SaveAs(path);
+
+                        //pass img urld in db
+                        categoryViewModel.NewCategory.CategoryImageUrl = "/Product_Image/" + fileName;
+                    }
+
+
                     // Set the Authorization header with the JWT token
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
 

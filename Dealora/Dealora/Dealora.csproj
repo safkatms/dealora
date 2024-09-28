@@ -241,6 +241,10 @@
     <Compile Include="Migrations\202409252217093_UpdateUserTable.Designer.cs">
       <DependentUpon>202409252217093_UpdateUserTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202409280158575_UpdateCategoryTable.cs" />
+    <Compile Include="Migrations\202409280158575_UpdateCategoryTable.Designer.cs">
+      <DependentUpon>202409280158575_UpdateCategoryTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\CartItem.cs" />
@@ -710,6 +714,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202409252217093_UpdateUserTable.resx">
       <DependentUpon>202409252217093_UpdateUserTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202409280158575_UpdateCategoryTable.resx">
+      <DependentUpon>202409280158575_UpdateCategoryTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
