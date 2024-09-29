@@ -1,0 +1,73 @@
+﻿@model Dealora.Models.ViewModel.OrderHistoryViewModel
+
+<div class="container mt-5">
+    <div class="row">
+        @Html.Partial("_Sidebar") <!-- Sidebar for navigation -->
+
+        <div class="col-md-9">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2>Order Details for Order #@Model.OrderId</h2>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <p><strong>Order Date:</strong> @Model.OrderDate.ToShortDateString()</p>
+                            <p><strong>Total Amount:</strong> $@Model.TotalAmount</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p>
+                                <strong>Status:</strong>
+                                @{
+                                    string statusClass = "badge badge-secondary"; // Default class
+                                    if (Model.Status == "Pending")
+                                    {
+                                        statusClass = "badge rounded-pill bg-info";
+                                    }
+                                    else if (Model.Status == "Shipped")
+                                    {
+                                        statusClass = "badge rounded-pill bg-primary";
+                                    }
+                                    else if (Model.Status == "Delivered")
+                                    {
+                                        statusClass = "badge rounded-pill bg-success";
+                                    }
+                                    else if (Model.Status == "Cancelled")
+                                    {
+                                        statusClass = "badge rounded-pill bg-danger";
+                                    }
+                                }
+                                <span class="@statusClass">@Model.Status</span> <!-- Using badge for status -->
+                            </p>
+                        </div>
+                    </div>
+
+                    <h3>Order Items</h3>
+
+                    <!-- Improved table design -->
+                    <table class="table table-hover table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Quantity</th>
+                                <th>Price at Purchase</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.OrderItems)
+                            {
+                                <tr>
+                                    <td>@item.ProductName</td>
+                                    <td>@item.Quantity</td>
+                                    <td>$@item.PriceAtPurchase</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    <!-- Back to Orders button -->
+                    <a href="@Url.Action("Index", "Order")" class="btn btn-secondary mt-3">Back to Orders</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

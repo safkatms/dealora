@@ -99,8 +99,6 @@
                                 <h5 class="card-title">@product.Name</h5>
                                 <p class="card-text">$@product.Price.ToString("F2")</p>
 
-                                
-
                                 <!-- Add To Cart link -->
                                 <a href="@Url.Action("AddToCart", "ShoppingCart", new { productId = product.Id, quantity = 1 })"
                                    class="btn btn-primary mt-auto"
@@ -111,5 +109,6 @@
                 }
             </div>
         </div>
+     </div>
 </main>
 

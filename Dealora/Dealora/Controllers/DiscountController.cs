@@ -3,6 +3,7 @@ using Dealora.Models;
 using Dealora.Models.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -63,6 +64,15 @@ namespace Dealora.Controllers
         {
             if (ModelState.IsValid)
             {
+                var existingDiscount = _db.Discounts.FirstOrDefault(u => u.Code.Equals(model.NewDiscount.Code, StringComparison.OrdinalIgnoreCase));
+
+                if (existingDiscount != null)
+                {
+                    ModelState.AddModelError("NewDiscount.Code", "Code is already registered.");
+                    return View("Index", model);
+                }
+
+
                 var response = await client.PostAsJsonAsync("discounts", model.NewDiscount);
 
                 if (response.IsSuccessStatusCode)

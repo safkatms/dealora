@@ -1,0 +1,37 @@
+﻿@model IEnumerable<Dealora.Models.ViewModel.OrderHistoryViewModel>
+
+<div class="container mt-5">
+    <div class="row">
+        @Html.Partial("_Sidebar") <!-- Sidebar for navigation -->
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="mb-4">Order History</h2>
+
+                    <!-- Loop through each order and display it as a card -->
+                    <div class="row">
+                        @foreach (var order in Model)
+                        {
+                            <div class="col-md-6 mb-4">
+                                <div class="card shadow-sm h-100">
+                                    <!-- Added 'h-100' to make cards equal height -->
+                                    <div class="card-body">
+                                        <h5 class="card-title">Order ID: @order.OrderId</h5>
+                                        <p class="card-text">
+                                            <strong>Order Date:</strong> @order.OrderDate.ToShortDateString() <br />
+                                            <strong>Total Amount:</strong> $@order.TotalAmount <br />
+                                            <strong>Status:</strong> @order.Status
+                                        </p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            @Html.ActionLink("Show Details", "Details", new { id = order.OrderId }, new { @class = "btn btn-primary" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

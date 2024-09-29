@@ -50,9 +50,21 @@
             </table>
         </div>
 
-        <div class="total-amount">
-            <h4>Total Amount: $@Model.TotalAmount.ToString("F2")</h4>
+        <!-- Container for total amount and checkout button aligned to the right -->
+        <div class="d-flex justify-content-end align-items-center">
+            <div class="text-right">
+                <div class="total-amount">
+                    <h4>Total Amount: $@Model.TotalAmount.ToString("F2")</h4>
+                </div>
+
+                <!-- Proceed to Checkout button -->
+                <div class="checkout-button mt-2">
+                    <a href="@Url.Action("Checkout", "ShoppingCart")" class="btn btn-success">Proceed to Checkout</a>
+                </div>
+            </div>
         </div>
+
+
     }
 </div>
 

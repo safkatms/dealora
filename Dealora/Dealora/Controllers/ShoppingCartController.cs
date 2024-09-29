@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,11 +21,23 @@ namespace Dealora.Controllers
         }
         public async Task<ActionResult> Index()
         {
+            // Check if the user is authenticated
+            if (Session["JWTToken"] == null || string.IsNullOrEmpty(Session["JWTToken"].ToString()))
+            {
+                return RedirectToAction("Login", "User"); // Redirect to login if not authenticated
+            }
+
+            // Check user type
+            if (Session["Type"]?.ToString() != "Customer")
+            {
+                return RedirectToAction("Unauthorized", "Home"); // Redirect if user type is not Customer
+            }
+
             var userId = Session["UserId"] != null ? (int)Session["UserId"] : 0;
 
             if (userId == 0)
             {
-                return RedirectToAction("Login", "User");
+                return RedirectToAction("Login", "User"); // Redirect to login if user ID is invalid
             }
 
             // Retrieve the shopping cart for the user
@@ -58,18 +71,27 @@ namespace Dealora.Controllers
             return View(viewModel);
         }
 
-
         // GET: ShoppingCart/AddToCart
         [HttpGet]
         public async Task<ActionResult> AddToCart(int productId, int quantity = 1) // Default quantity set to 1
         {
-            // Get user ID from session
+            // Check if the user is authenticated
+            if (Session["JWTToken"] == null || string.IsNullOrEmpty(Session["JWTToken"].ToString()))
+            {
+                return RedirectToAction("Login", "User"); // Redirect to login if not authenticated
+            }
+
+            // Check user type
+            if (Session["Type"]?.ToString() != "Customer")
+            {
+                return RedirectToAction("Unauthorized", "Home"); // Redirect if user type is not Customer
+            }
+
             var userId = Session["UserId"] != null ? (int)Session["UserId"] : 0;
 
-            if (userId == 0)
-            {
-                return RedirectToAction("Login", "User");
-            }
+           
+
+
 
             // Find the shopping cart for the user
             var shoppingCart = await _context.ShoppingCarts
@@ -115,6 +137,7 @@ namespace Dealora.Controllers
         [HttpGet]
         public async Task<ActionResult> UpdateQuantity(int id, int quantity)
         {
+            
             // Validate quantity
             if (quantity < 1)
             {
@@ -124,10 +147,6 @@ namespace Dealora.Controllers
             // Get user ID from session
             var userId = Session["UserId"] != null ? (int)Session["UserId"] : 0;
 
-            if (userId == 0)
-            {
-                return RedirectToAction("Login", "User");
-            }
 
             // Find the cart item
             var cartItem = await _context.CartItems.Include(ci => ci.Product).FirstOrDefaultAsync(ci => ci.Id == id);
@@ -162,6 +181,162 @@ namespace Dealora.Controllers
             }
             return RedirectToAction("Index");
         }
+
+
+
+        // GET: Checkout
+        [HttpGet]
+        public async Task<ActionResult> Checkout()
+        {
+            if (Session["JWTToken"] == null || string.IsNullOrEmpty(Session["JWTToken"].ToString()))
+            {
+                return RedirectToAction("Login", "User"); // Redirect to login if not authenticated
+            }
+
+            // Check user type
+            if (Session["Type"]?.ToString() != "Customer")
+            {
+                return RedirectToAction("Unauthorized", "Home"); // Redirect if user type is not Customer
+            }
+            var userId = Session["UserId"] != null ? (int)Session["UserId"] : 0;
+
+           
+            // Retrieve the user's shopping cart and addresses
+            var cartItems = await _context.CartItems
+                .Include(ci => ci.Product)
+                .Where(ci => ci.ShoppingCart.UserId == userId)
+                .ToListAsync();
+
+            var addresses = await _context.Addresses
+                .Where(a => a.UserId == userId)
+                .ToListAsync();
+
+            var viewModel = new CheckoutViewModel
+            {
+                CartItems = cartItems,
+                Addresses = addresses,
+                TotalAmount = cartItems.Sum(ci => ci.Product.Price * ci.Quantity),
+            };
+
+            return View(viewModel);
+        }
+
+        // POST: Checkout
+        [HttpPost]
+        public async Task<ActionResult> Checkout(CheckoutViewModel model)
+        {
+            var userId = Session["UserId"] != null ? (int)Session["UserId"] : 0;
+
+            
+
+            // Retrieve the user's cart items again in case of changes during checkout
+            var cartItems = await _context.CartItems
+                .Include(ci => ci.Product)
+                .Where(ci => ci.ShoppingCart.UserId == userId)
+                .ToListAsync();
+
+            // Calculate the total amount based on cart items
+            model.TotalAmount = cartItems.Sum(ci => ci.Product.Price * ci.Quantity);
+
+            // Apply discount if provided
+            if (!string.IsNullOrEmpty(model.DiscountCode))
+            {
+                // Retrieve the discount from the database
+                var discount = await _context.Discounts
+                    .FirstOrDefaultAsync(d => d.Code == model.DiscountCode && d.IsActive);
+
+                // Check if the discount is expired
+                if (discount != null && discount.ExpiryDate < DateTime.Now)
+                {
+                    discount = null;  // Treat as expired
+                }
+
+                if (discount != null)
+                {
+                    // Apply discount to the total amount
+                    model.TotalAmount -= model.TotalAmount * (discount.DiscountPercentage / 100);
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Invalid or expired discount code.";
+                    return RedirectToAction("Checkout");
+                }
+            }
+
+            // Create the order
+            var order = new Order
+            {
+                UserId = userId,
+                OrderDate = DateTime.Now,
+                TotalAmount = model.TotalAmount,
+                Status = OrderStatus.Pending,
+                AddressId = model.AddressId,
+                PaymentMethod = model.PaymentMethod,
+            };
+
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+
+            // Add order items
+            foreach (var item in cartItems)
+            {
+                var orderItem = new OrderItem
+                {
+                    OrderId = order.Id,
+                    ProductId = item.ProductId,
+                    Quantity = item.Quantity,
+                    PriceAtPurchase = item.Product.Price
+                };
+                _context.OrderItems.Add(orderItem);
+                var product = await _context.Products.FindAsync(item.ProductId);
+                if (product != null)
+                {
+                    product.StockQuantity -= item.Quantity;   // Update the product in the database
+                }
+            }
+
+            // Remove cart items after order is placed
+            _context.CartItems.RemoveRange(cartItems);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("OrderConfirmation", new { orderId = order.Id });
+        }
+
+
+
+        // GET: Order Confirmation
+        public async Task<ActionResult> OrderConfirmation(int orderId)
+        {
+            // Check if the user is authenticated
+            if (Session["JWTToken"] == null || string.IsNullOrEmpty(Session["JWTToken"].ToString()))
+            {
+                return RedirectToAction("Login", "User"); // Redirect to login if not authenticated
+            }
+
+            // Check user type
+            if (Session["Type"]?.ToString() != "Customer")
+            {
+                return RedirectToAction("Unauthorized", "Home"); // Redirect if user type is not Customer
+            }
+
+            var userId = Session["UserId"] != null ? (int)Session["UserId"] : 0;
+
+            
+
+            // Retrieve the order and check if it belongs to the current user
+            var order = await _context.Orders
+                .Include(o => o.User)
+                .Include(o => o.Address)
+                .FirstOrDefaultAsync(o => o.Id == orderId && o.UserId == userId);
+
+            if (order == null)
+            {
+                return RedirectToAction("Unauthorized", "Home"); // Redirect if order does not belong to the user
+            }
+
+            return View(order);
+        }
+
 
         protected override void Dispose(bool disposing)
         {
