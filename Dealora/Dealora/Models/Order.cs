@@ -7,10 +7,11 @@ namespace Dealora.Models
 {
     public enum OrderStatus
     {
-        Pending,
-        Shipped,
-        Delivered,
-        Canceled
+        Pending,    // Order item is pending
+        Confirmed,  // Order item has been confirmed by the seller
+        Shipped,    // Order item has been shipped
+        Delivered,  // Order item has been delivered to the customer
+        Cancelled    // Order item has been canceled
     }
 
     public class Order
