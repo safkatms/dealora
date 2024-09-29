@@ -27,23 +27,21 @@ namespace Dealora.Controllers
             this.client.BaseAddress = new Uri(@"http://localhost:9570/api/");
         }
 
-        [HttpGet]
+        // GET: Addresses
         public async Task<ActionResult> Index()
         {
             if (Session["JWTToken"] != null)
             {
-                // Set Authorization header with JWT token
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
 
-           
                 int userId = (int)Session["UserId"];
 
                 var response = await client.GetAsync($"Addresses/{userId}");
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var address = await response.Content.ReadAsAsync<Address>();
-                    return View(address);
+                    var addresses = await response.Content.ReadAsAsync<List<Address>>();
+                    return View(addresses); // Pass a list of addresses
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
@@ -51,7 +49,7 @@ namespace Dealora.Controllers
                 }
                 else
                 {
-                    return View();
+                    return View(new List<Address>()); // Return an empty list if the response is not successful
                 }
             }
             else
@@ -59,7 +57,6 @@ namespace Dealora.Controllers
                 return RedirectToAction("Login", "User");
             }
         }
-
 
 
 
@@ -199,7 +196,7 @@ namespace Dealora.Controllers
 
 
 
-        // GET: Addresse/Delete/5
+        /// GET: Addresse/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
@@ -220,10 +217,27 @@ namespace Dealora.Controllers
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Address address = await db.Addresses.FindAsync(id);
+            if (address == null)
+            {
+                return HttpNotFound();
+            }
+
+            // Check if there are any orders associated with this address
+            var hasOrders = await db.Orders.AnyAsync(o => o.AddressId == id);
+            if (hasOrders)
+            {
+                TempData["ErrorMessage"] = "Cannot delete this address. There are orders associated with it.";
+                return RedirectToAction("Index"); // Redirect to the index or an appropriate view
+            }
+
+            // Proceed with deletion
             db.Addresses.Remove(address);
             await db.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Address deleted successfully.";
             return RedirectToAction("Index");
         }
+
 
         protected override void Dispose(bool disposing)
         {

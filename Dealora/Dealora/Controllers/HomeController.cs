@@ -42,10 +42,13 @@ namespace Dealora.Controllers
                 var products = await response1.Content.ReadAsAsync<IEnumerable<Product>>();
                 var categories = await response2.Content.ReadAsAsync<IEnumerable<Category>>();
 
+                // Shuffle the products randomly
+                var randomProducts = products.OrderBy(p => Guid.NewGuid()).ToList();
+
                 // Create ViewModel to pass to the View
                 var viewModel = new HomeViewModel
                 {
-                    Products = products,
+                    Products = randomProducts, // Use the shuffled product list
                     Categories = categories
                 };
 
@@ -58,6 +61,7 @@ namespace Dealora.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Error retrieving data from API.");
             }
         }
+
 
         // GET: Products by Category
         public async Task<ActionResult> ProductsByCategory(int categoryId)

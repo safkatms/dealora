@@ -7,12 +7,12 @@
         <div class="col-md-9">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h2>Order Details for Order #@Model.OrderId</h2>
+                    <h2 class="text-center mb-4">Order Details for Order #@Model.OrderId</h2>
 
                     <div class="row mb-4">
                         <div class="col-md-6">
                             <p><strong>Order Date:</strong> @Model.OrderDate.ToShortDateString()</p>
-                            <p><strong>Total Amount:</strong> $@Model.TotalAmount</p>
+                            <p><strong>Total Amount:</strong> <span class="h5 text-success">$@Model.TotalAmount</span></p>
                         </div>
                         <div class="col-md-6">
                             <p>
@@ -21,11 +21,15 @@
                                     string statusClass = "badge badge-secondary"; // Default class
                                     if (Model.Status == "Pending")
                                     {
+                                        statusClass = "badge rounded-pill bg-light";
+                                    }
+                                    else if (Model.Status == "Confirmed")
+                                    {
                                         statusClass = "badge rounded-pill bg-info";
                                     }
                                     else if (Model.Status == "Shipped")
                                     {
-                                        statusClass = "badge rounded-pill bg-primary";
+                                        statusClass = "badge rounded-pill bg-warning";
                                     }
                                     else if (Model.Status == "Delivered")
                                     {
@@ -41,10 +45,10 @@
                         </div>
                     </div>
 
-                    <h3>Order Items</h3>
+                    <h3 class="mt-4">Order Items</h3>
 
                     <!-- Improved table design -->
-                    <table class="table table-hover table-striped">
+                    <table class="table table-hover table-bordered mt-2">
                         <thead class="thead-dark">
                             <tr>
                                 <th>Product Name</th>
@@ -53,19 +57,31 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in Model.OrderItems)
+                            @if (!Model.OrderItems.Any())
                             {
                                 <tr>
-                                    <td>@item.ProductName</td>
-                                    <td>@item.Quantity</td>
-                                    <td>$@item.PriceAtPurchase</td>
+                                    <td colspan="3" class="text-center">No items found in this order.</td>
                                 </tr>
+                            }
+                            else
+                            {
+                                foreach (var item in Model.OrderItems)
+                                {
+                                    <tr>
+                                        <td>@item.ProductName</td>
+                                        <td>@item.Quantity</td>
+                                        <td>$@item.PriceAtPurchase</td>
+                                    </tr>
+                                }
                             }
                         </tbody>
                     </table>
 
                     <!-- Back to Orders button -->
-                    <a href="@Url.Action("Index", "Order")" class="btn btn-secondary mt-3">Back to Orders</a>
+                    <div class="d-flex justify-content-between mt-3">
+                        <a href="@Url.Action("Index", "Order")" class="btn btn-secondary">Back to Orders</a>
+                       
+                    </div>
                 </div>
             </div>
         </div>

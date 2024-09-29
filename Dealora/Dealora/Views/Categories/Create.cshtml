@@ -1,88 +1,126 @@
 ﻿@model Dealora.Models.ViewModel.CategoryViewModel
-
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Create Category";
 }
 
-<h2>Create</h2>
+<div class="container mt-5">
+    <div class="row">
+        @Html.Partial("_Sidebar")
 
-@using (Html.BeginForm("Create", "Categories", FormMethod.Post, new { enctype = "multipart/form-data" }))
-{
-    @Html.AntiForgeryToken()
+        <div class="col-md-9">
+            <div class="card">
+                <div class="row">
+                    <!-- Category List -->
+                    <div class="col-md-8">
+                        <h4>Category Informations</h4>
+                        <div class="category-list border">
+                            @if (Model.Categories != null && Model.Categories.Any())
+                            {
 
-    <div class="form-horizontal">
-        <h4>Category</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                <table id="CategoryTable" class="table table-hover table-bordered">
+                                    <thead class="table-info">
+                                        <tr>
+                                            <th>@Html.DisplayNameFor(model => model.Categories.FirstOrDefault().Name)</th>
+                                            <th>@Html.DisplayNameFor(model => model.Categories.FirstOrDefault().Description)</th>
+                                            <th>Image</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.Categories)
+                                        {
+                                            <tr>
+                                                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                                                <td>
+                                                    @if (!string.IsNullOrEmpty(item.CategoryImageUrl))
+                                                    {
+                                                        <img src="@item.CategoryImageUrl" alt="Category Image" style="max-width: 50px; max-height: 50px;" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>No Image Available</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger" role="alert">
+                                    No categories available at the moment.
+                                </div>
+                            }
+                        </div>
+                    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.NewCategory.Name, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.NewCategory.Name, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.NewCategory.Name, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                    <!-- New Category Form -->
+                    <div class="col-md-4">
+                        <h4>Create New Category</h4>
+                        @using (Html.BeginForm("Create", "Categories", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form" }))
+                        {
+                            @Html.AntiForgeryToken()
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.NewCategory.Description, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.NewCategory.Description, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.NewCategory.Description, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                            <div class="mb-3">
+                                @Html.LabelFor(model => model.NewCategory.Name, "Category Name")
+                                @Html.TextBoxFor(model => model.NewCategory.Name, new { @class = "form-control", required = "required" })
+                                @Html.ValidationMessageFor(model => model.NewCategory.Name, "", new { @class = "text-danger" })
+                            </div>
 
-        <div class="form-group">
-            @Html.Label("Upload Category Image", new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <input type="file" name="CategoryImage" class="form-control" />
-                @Html.ValidationMessage("", "", new { @class = "text-danger" })
-            </div>
-        </div>
+                            <div class="mb-3">
+                                @Html.LabelFor(model => model.NewCategory.Description, "Category Description")
+                                @Html.TextBoxFor(model => model.NewCategory.Description, new { @class = "form-control", required = "required" })
+                                @Html.ValidationMessageFor(model => model.NewCategory.Description, "", new { @class = "text-danger" })
+                            </div>
 
-        <br>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                            <div class="mb-3">
+                                @Html.Label("Upload Category Image")
+                                <input type="file" name="CategoryImage" class="form-control" required />
+                                @Html.ValidationMessage("", "", new { @class = "text-danger" })
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Create Category</button>
+                        }
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <hr />
-}
-
-<div>
-    <h2>Category Informations</h2>
-    <hr />
-    <p>
-        @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-success" })
-    </p>
-
-    <table class="table table-hover table-bordered">
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Categories.FirstOrDefault().Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Categories.FirstOrDefault().Description)
-            </th>
-            <th>Image</th>
-        </tr>
-
-        @foreach (var item in Model.Categories)
-        {
-            <tr>
-                <td>@Html.DisplayFor(modelItem => item.Name)</td>
-                <td>@Html.DisplayFor(modelItem => item.Description)</td>
-                <td>
-                    @if (!string.IsNullOrEmpty(item.CategoryImageUrl))
-                    {
-                        <img src="@item.CategoryImageUrl" alt="Category Image" style="max-width: 50px; max-height: 50px;" />
-                    }
-                    else
-                    {
-                        <span>No Image Available</span>
-                    }
-                </td>
-            </tr>
-        }
-    </table>
 </div>
+@section scripts {
+    <!-- jQuery and DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Initialize DataTable
+            var table = $('#CategoryTable').DataTable({
+                "dom": '<"top"f>t<"bottom"p><"clear">', // Custom placement of elements
+                "language": {
+                    "search": "", // Remove the default 'Search' label
+                    "searchPlaceholder": "Type to search..." // Placeholder text
+                }
+            });
+
+            // Style the search box
+            $('#UsersTable_filter input')
+                .addClass('form-control') // Add Bootstrap styling
+                .attr('placeholder', 'Search users...') // Add custom placeholder
+                .css({
+                    'width': '300px',
+                    'display': 'inline-block',
+                    'margin-left': '10px'
+                });
+
+            // Optionally, adjust the table wrapper for a cleaner look
+            $('#UsersTable_wrapper .top').css({
+                'display': 'flex',
+                'justify-content': 'flex-end',
+                'margin-bottom': '10px'
+            });
+        });
+    </script>
+}

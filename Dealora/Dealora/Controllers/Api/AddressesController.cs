@@ -25,15 +25,17 @@ namespace Dealora.Controllers.API
         [Route("api/Addresses/{userId}")]
         public IHttpActionResult GetAddressesByUserId(int userId)
         {
-            var address = db.Addresses.FirstOrDefault(a => a.UserId == userId);
+            // Get all addresses for the specified user
+            var addresses = db.Addresses.Where(a => a.UserId == userId).ToList();
 
-            if (address == null)
+            if (addresses == null || !addresses.Any())
             {
                 return NotFound();
             }
 
-            return Ok(address);
+            return Ok(addresses);
         }
+
 
 
         // POST: api/Addresses

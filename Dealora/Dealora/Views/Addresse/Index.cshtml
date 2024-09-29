@@ -1,55 +1,84 @@
-﻿@model Dealora.Models.Address
+﻿@model IEnumerable<Dealora.Models.Address>
 
 @{
-    ViewBag.Title = "Address Details";
+    ViewBag.Title = "Addresses List";
 }
 
 <div class="container mt-5">
     <div class="row">
         @Html.Partial("_Sidebar") <!-- Assuming you have a sidebar partial -->
         <div class="col-md-9">
-            <div class="card">
-                <div class="card-body">
-                    <h2>Address Details</h2>
+            <h2 class="mb-4">Your Addresses</h2>
 
-                    @if (Model != null)
-                    {
-                        
-                            <div class="card-body">
-                                <h5 class="card-title">Street Address</h5>
-                                <p class="card-text">@Html.DisplayFor(model => model.StreetAddress)</p>
+            <!-- Success or Error Messages -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success" id="hide">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger" id="hide">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
 
-                                <h5 class="card-title">City</h5>
-                                <p class="card-text">@Html.DisplayFor(model => model.City)</p>
+            @if (Model != null && Model.Any())
+            {
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="card-title">Saved Addresses</h4>
+                        @Html.ActionLink("Create New Address", "Create", null, new { @class = "btn btn-success ml-auto" })
+                    </div>
 
-                                <!-- Edit & Delete Buttons -->
-                                <div class="row mt-3">
-                                    <div class="col-md-3">
-                                        <div class="d-flex flex-column">
-                                            <div class="mb-2">
-                                                @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-success w-100 btn-sm" })
-                                            </div>
-                                            <div>
-                                                @using (Html.BeginForm("Delete", "Addresse", FormMethod.Post))
-                                                {
-                                                    @Html.AntiForgeryToken()
-                                                    @Html.Hidden("id", Model.Id)
-                                                    <input type="submit" value="Delete" class="btn btn-danger w-100 btn-sm" onclick="return confirm('Are you sure you want to delete this address?');" />
-                                                }
-                                            </div>
+                    <div class="list-group list-group-flush">
+                        @foreach (var address in Model)
+                        {
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-column">
+                                        <h5 class="mb-1">@Html.DisplayFor(m => address.StreetAddress)</h5>
+                                        <p class="mb-1">@Html.DisplayFor(m => address.City)</p>
+                                    </div>
+                                    <div class="flex-column align-items-end">
+                                        <div class="mb-2">
+                                            @Html.ActionLink("Edit", "Edit", new { id = address.Id }, new { @class = "btn btn-primary w-100" })
+                                        </div>
+                                        <div>
+                                            @using (Html.BeginForm("Delete", "Addresse", FormMethod.Post))
+                                            {
+                                                @Html.AntiForgeryToken()
+                                                @Html.Hidden("id", address.Id)
+                                                <input type="submit" value="Delete" class="btn btn-danger w-100" onclick="return confirm('Are you sure you want to delete this address?');" />
+                                            }
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                    }
-                    else
-                    {
-                        <div class="alert alert-info">
-                            No address found. @Html.ActionLink("Create New Address", "Create", null, new { @class = "btn btn-success" })
-                        </div>
-                    }
+                        }
+                    </div>
                 </div>
-            </div>
+            }
+            else
+            {
+                <div class="alert alert-info mt-4">
+                    No addresses found. @Html.ActionLink("Create New Address", "Create", null, new { @class = "btn btn-success" })
+                </div>
+            }
         </div>
     </div>
 </div>
+
+<!-- JavaScript to hide success message after 10 seconds -->
+@section Scripts {
+    <script>
+        setTimeout(function () {
+            var successMessage = document.getElementById("hide");
+            if (successMessage) {
+                successMessage.style.display = "none";
+            }
+        }, 10000); // 10 seconds
+    </script>
+}
+    

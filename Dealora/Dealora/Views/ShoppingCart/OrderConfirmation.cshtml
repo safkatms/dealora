@@ -1,12 +1,26 @@
 ﻿@model Dealora.Models.Order
 
-<h2>Order Confirmation</h2>
+<div class="container mt-5 mb-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white text-center">
+            <h2>Order Confirmation</h2>
+        </div>
+        <div class="card-body">
+            <p class="lead">Thank you for your order! Your order number is <strong>#@Model.Id</strong>.</p>
 
-<p>Thank you for your order! Your order number is <strong>@Model.Id</strong>.</p>
+            <h4 class="mt-4">Shipping to:</h4>
+            <p class="border p-3 bg-light">
+                @Model.Address.StreetAddress,<br />
+                @Model.Address.City
+            </p>
 
-<h4>Shipping to:</h4>
-<p>
-    @Model.Address.StreetAddress, @Model.Address.City
-</p>
+            <h4 class="mt-4">Total Amount:</h4>
+            <p class="display-5 text-success fw-bold">৳@Model.TotalAmount.ToString("F2")</p>
 
-<h4>Total Amount: $@Model.TotalAmount.ToString("F2")</h4>
+            <div class="text-center mt-4">
+                <a href="@Url.Action("Index", "Home")" class="btn btn-primary btn-lg">Continue Shopping</a>
+                <a href="@Url.Action("Index", "Order")" class="btn btn-secondary btn-lg">View Order History</a>
+            </div>
+        </div>
+    </div>
+</div>

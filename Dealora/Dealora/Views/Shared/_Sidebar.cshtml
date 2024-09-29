@@ -11,7 +11,7 @@
                     @if (Session["Type"].ToString() == "Admin")
                     {
                         <li class="nav-item">
-                            @Html.ActionLink("Home", "Index", "User", new { area = "" }, new { @class = "nav-link" })
+                            @Html.ActionLink("Users", "Index", "User", new { area = "" }, new { @class = "nav-link" })
                         </li>
                         <li class="nav-item">
                             @Html.ActionLink("Create New User", "Create", "User", new { area = "" }, new { @class = "nav-link" })
@@ -34,9 +34,15 @@
                     }
                     else
                     {
-                <li class="nav-item">
-                    @Html.ActionLink("Product", "Index", "Product", new { area = "" }, new { @class = "nav-link" })
-                </li>
+                        <li class="nav-item">
+                            @Html.ActionLink("Dashboard", "Sellerdashboard", "Product", new { area = "" }, new { @class = "nav-link" })
+                        </li>
+                        <li class="nav-item">
+                            @Html.ActionLink("Product", "Index", "Product", new { area = "" }, new { @class = "nav-link" })
+                        </li>
+                        <li class="nav-item">
+                            @Html.ActionLink("Orders", "SellerOrders", "Order", new { area = "" }, new { @class = "nav-link" })
+                        </li>
                     }
 
 

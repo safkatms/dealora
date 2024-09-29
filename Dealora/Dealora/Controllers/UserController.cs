@@ -26,30 +26,30 @@ namespace Dealora.Controllers
             this.client.BaseAddress = new Uri(@"http://localhost:9570/api/");
         }
 
-        
+
         // GET: User
         public async Task<ActionResult> Index()
         {
             if (Session["JWTToken"] != null)
             {
-                    
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
 
-                    var response = await client.GetAsync("users");
-                    
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var data = await response.Content.ReadAsAsync<IEnumerable<User>>();
-                        return View(data);
-                    }
-                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    {
-                        return RedirectToAction("Unauthorized","Home");
-                    }
-                    else
-                    {
-                        return new HttpStatusCodeResult(response.StatusCode, "Error retrieving data from API.");
-                    }   
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
+
+                var response = await client.GetAsync("users");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = await response.Content.ReadAsAsync<IEnumerable<User>>();
+                    return View(data);
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    return RedirectToAction("Unauthorized", "Home");
+                }
+                else
+                {
+                    return new HttpStatusCodeResult(response.StatusCode, "Error retrieving data from API.");
+                }
             }
             else
             {
@@ -104,53 +104,57 @@ namespace Dealora.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginModel loginModel)
         {
-            
-                if (db.Users.Any(u => u.Email == loginModel.Email))
+
+            if (db.Users.Any(u => u.Email == loginModel.Email))
+            {
+                var response = await client.PostAsJsonAsync("users/login", loginModel);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    var response = await client.PostAsJsonAsync("users/login", loginModel);
+                    var tokenResponse = await response.Content.ReadAsAsync<TokenResponse>();
 
-                    if (response.IsSuccessStatusCode)
+                    Session["JWTToken"] = tokenResponse.token;
+
+                    var handler = new JwtSecurityTokenHandler();
+                    var jwtToken = handler.ReadJwtToken(tokenResponse.token);
+                    var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub);
+                    if (userIdClaim != null)
                     {
-                        var tokenResponse = await response.Content.ReadAsAsync<TokenResponse>();
+                        Session["UserId"] = int.Parse(userIdClaim.Value);
+                    }
+                    Session["Firstname"] = jwtToken.Claims.First(c => c.Type == JwtRegisteredClaimNames.GivenName).Value;
+                    Session["Lastname"] = jwtToken.Claims.First(c => c.Type == JwtRegisteredClaimNames.FamilyName).Value;
+                    Session["Type"] = jwtToken.Claims.First(c => c.Type == ClaimTypes.Role).Value;
 
-                        Session["JWTToken"] = tokenResponse.token;
-
-                        var handler = new JwtSecurityTokenHandler();
-                        var jwtToken = handler.ReadJwtToken(tokenResponse.token);
-                        var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub);
-                        if (userIdClaim != null)
-                        {
-                            Session["UserId"] = int.Parse(userIdClaim.Value);
-                        }
-                        Session["Firstname"] = jwtToken.Claims.First(c => c.Type == JwtRegisteredClaimNames.GivenName).Value; 
-                        Session["Lastname"] = jwtToken.Claims.First(c => c.Type == JwtRegisteredClaimNames.FamilyName).Value;
-                        Session["Type"] = jwtToken.Claims.First(c => c.Type == ClaimTypes.Role).Value;
-
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenResponse.token);
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenResponse.token);
                     if (Session["Type"].ToString() == "Admin")
                     {
                         return RedirectToAction("Index");
                     }
-                    else
+                    else if (Session["Type"].ToString() == "Customer")
                     {
 
-                        return RedirectToAction("Index","Home");
-                    }
-                    }
-                    else if (response.StatusCode == HttpStatusCode.NotFound)
-                    {
-                        TempData["Invalid"] = "The email address does not exist.";
+                        return RedirectToAction("Index", "Home");
                     }
                     else
                     {
-                        TempData["Invalid"] = "Invalid email or password.";
+                        return RedirectToAction("Sellerdashboard", "Product");
                     }
                 }
-                else
+                else if (response.StatusCode == HttpStatusCode.NotFound)
                 {
                     TempData["Invalid"] = "The email address does not exist.";
                 }
-            
+                else
+                {
+                    TempData["Invalid"] = "Invalid email or password.";
+                }
+            }
+            else
+            {
+                TempData["Invalid"] = "The email address does not exist.";
+            }
+
 
             return View(loginModel);
         }
@@ -168,26 +172,26 @@ namespace Dealora.Controllers
         {
             if (Session["JWTToken"] != null && Session["UserId"] != null)
             {
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
 
-                    int userId = (int)Session["UserId"];
+                int userId = (int)Session["UserId"];
 
-                    var response = await client.GetAsync($"users/{userId}");
+                var response = await client.GetAsync($"users/{userId}");
 
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var user = await response.Content.ReadAsAsync<User>();
-                        return View(user);
-                    }
-                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    {
-                        return RedirectToAction("Login");
-                    }
-                    else
-                    {
-                        return new HttpStatusCodeResult(response.StatusCode, "Error retrieving profile data.");
-                    }
-                
+                if (response.IsSuccessStatusCode)
+                {
+                    var user = await response.Content.ReadAsAsync<User>();
+                    return View(user);
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    return RedirectToAction("Login");
+                }
+                else
+                {
+                    return new HttpStatusCodeResult(response.StatusCode, "Error retrieving profile data.");
+                }
+
             }
             else
             {
@@ -246,7 +250,7 @@ namespace Dealora.Controllers
                 int userId = (int)Session["UserId"];
 
                 var response = await client.PutAsJsonAsync($"Users/Update/{userId}", model);
-                var responseContent = await response.Content.ReadAsStringAsync(); 
+                var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -292,35 +296,35 @@ namespace Dealora.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
         {
-            
-                if (Session["JWTToken"] != null)
+
+            if (Session["JWTToken"] != null)
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
+
+                int userId = (int)Session["UserId"];
+
+                var response = await client.PutAsJsonAsync($"Users/ChangePassword/{userId}", model);
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
                 {
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
-
-                    int userId = (int)Session["UserId"];
-
-                    var response = await client.PutAsJsonAsync($"Users/ChangePassword/{userId}", model);
-                    var responseContent = await response.Content.ReadAsStringAsync(); 
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        TempData["Pass"] = "Password changed successfully!";
-                        return RedirectToAction("UserProfile");
-                    }
-                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    {
-                        return RedirectToAction("Login");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "Error changing password.");
-                    }
+                    TempData["Pass"] = "Password changed successfully!";
+                    return RedirectToAction("UserProfile");
                 }
-                else
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     return RedirectToAction("Login");
                 }
-            
+                else
+                {
+                    ModelState.AddModelError("", "Error changing password.");
+                }
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+
 
             return View(model);
         }
@@ -380,8 +384,8 @@ namespace Dealora.Controllers
             var user = db.Users.Find(id);
             if (user != null)
             {
-                user.IsActive = false; 
-                db.SaveChanges(); 
+                user.IsActive = false;
+                db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
@@ -396,9 +400,9 @@ namespace Dealora.Controllers
             var user = db.Users.Find(id);
             if (user != null)
             {
-                user.IsActive = true; 
-                db.SaveChanges(); 
-                return RedirectToAction("Index"); 
+                user.IsActive = true;
+                db.SaveChanges();
+                return RedirectToAction("Index");
             }
 
             return HttpNotFound();
