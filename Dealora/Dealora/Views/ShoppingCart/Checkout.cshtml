@@ -1,72 +1,86 @@
 ﻿@model Dealora.Models.ViewModel.CheckoutViewModel
 
-<h2>Checkout</h2>
+<div class="checkout-page container mt-5 mb-5">
+    <div class="checkout-form p-4 shadow rounded bg-white">
+        <h2 class="mb-4 text-center display-4">Checkout</h2>
 
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger">
-        @TempData["ErrorMessage"]
-    </div>
-}
-
-<div class="checkout-form">
-    <form asp-action="Checkout" method="post">
-        <!-- Cart Items Summary -->
-        <h4>Order Summary</h4>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.CartItems)
-                {
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger text-center">
+                @TempData["ErrorMessage"]
+            </div>
+        }
+        <form asp-action="Checkout" method="post">
+            <!-- Cart Items Summary -->
+            <h4 class="text-primary mb-4">Order Summary</h4>
+            <table class="table table-bordered table-striped">
+                <thead class="table-light">
                     <tr>
-                        <td>@item.Product.Name</td>
-                        <td>@item.Quantity</td>
-                        <td>@item.Product.Price.ToString("F2")</td>
-                        <td>@((item.Quantity * item.Product.Price).ToString("F2"))</td>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.CartItems)
+                    {
+                        <tr>
+                            <td>@item.Product.Name</td>
+                            <td>@item.Quantity</td>
+                            <td>৳@item.Product.Price.ToString("F2")</td>
+                            <td>৳@((item.Quantity * item.Product.Price).ToString("F2"))</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
 
-        <!-- Total Amount before discount -->
-        <h4>Subtotal: $@Model.TotalAmount.ToString("F2")</h4>
+            <!-- Total Amount before discount -->
+            <div class="total-amount mb-3">
+                <h4 class="fw-bold">Subtotal: <span class="text-success">৳@Model.TotalAmount.ToString("F2")</span></h4>
+            </div>
 
-        <!-- Discount Code -->
-        <div class="form-group">
-            <label for="discountCode">Discount Code</label>
-            <input type="text" id="discountCode" name="DiscountCode" class="form-control" placeholder="Enter discount code" />
-        </div>
+            <!-- Discount Code -->
+            <div class="form-group mb-3">
+                <label for="discountCode" class="form-label">Discount Code</label>
+                <input type="text" id="discountCode" name="DiscountCode" class="form-control" placeholder="Enter discount code" />
+            </div>
 
-        <!-- Address Selection -->
-        <div class="form-group">
-            <label for="address">Select Address</label>
-            <select id="address" name="AddressId" class="form-control" required>
-                <option value="">--Select Address--</option>
-                @foreach (var address in Model.Addresses)
+            <!-- Address Selection -->
+            <div class="form-group mb-3">
+                <label class="form-label">Select Address</label>
+                @if (Model.Addresses == null || !Model.Addresses.Any())
                 {
-                    <option value="@address.Id">@address.StreetAddress, @address.City</option>
+                    <div class="alert alert-warning">
+                        No addresses found. Please <a href="@Url.Action("Create", "Addresse")">add an address</a> before placing an order.
+                    </div>
                 }
-            </select>
-        </div>
+                else
+                {
+                    foreach (var address in Model.Addresses)
+                    {
+                        <div class="form-check">
+                            <input type="radio" id="address_@address.Id" name="AddressId" value="@address.Id" class="form-check-input" required />
+                            <label for="address_@address.Id" class="form-check-label">@address.StreetAddress, @address.City</label>
+                        </div>
+                    }
+                }
+            </div>
 
-        <!-- Payment Method -->
-        <div class="form-group">
-            <label for="paymentMethod">Payment Method</label>
-            <select id="paymentMethod" name="PaymentMethod" class="form-control" required>
-                <option value="">--Select Payment Method--</option>
-                <option value="0">Credit Card</option>
-                <option value="1">PayPal</option>
-            </select>
-        </div>
+            <!-- Payment Method -->
+            <div class="form-group mb-4">
+                <label for="paymentMethod" class="form-label">Payment Method</label>
+                <select id="paymentMethod" name="PaymentMethod" class="form-select" required>
+                    <option value="">--Select Payment Method--</option>
+                    <option value="0">Credit Card</option>
+                    <option value="1">PayPal</option>
+                </select>
+            </div>
 
-        <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary">Place Order</button>
-    </form>
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary btn-lg w-100" @(Model.Addresses == null || !Model.Addresses.Any() ? "disabled" : "")>
+                Place Order
+            </button>
+        </form>
+    </div>
 </div>

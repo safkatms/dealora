@@ -135,13 +135,18 @@ namespace Dealora.Controllers.API
             {
                 return BadRequest(ModelState);
             }
+
             var user = db.Users.SingleOrDefault(u => u.Email == model.Email && u.Password == model.Password);
 
-            if (user == null) return Unauthorized();
+            if (user == null || !user.IsActive)
+            {
+                return Unauthorized();
+            }
 
             var token = GenerateJwtToken(user);
             return Ok(new { token });
         }
+
 
 
         private string GenerateJwtToken(User user)

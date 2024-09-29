@@ -107,14 +107,18 @@ namespace Dealora.Controllers
 
         public async Task<ActionResult> SellerOrders()
         {
-            // Get seller ID from session
+            if (Session["JWTToken"] == null || string.IsNullOrEmpty(Session["JWTToken"].ToString()))
+            {
+                return RedirectToAction("Login", "User"); // Redirect to login if not authenticated
+            }
+
+            if (Session["Type"]?.ToString() != "Seller")
+            {
+                return RedirectToAction("Unauthorized", "Home"); // Redirect if user type is not Customer
+            }
             var sellerId = Session["UserId"] != null ? (int)Session["UserId"] : 0;
 
-            // Check if seller ID is valid
-            if (sellerId == 0)
-            {
-                return RedirectToAction("Login", "User"); // Redirect if not logged in
-            }
+            
 
             // Retrieve all order items for the seller along with customer info
             var sellerOrders = await _context.OrderItems
@@ -139,6 +143,48 @@ namespace Dealora.Controllers
                 .ToListAsync();
 
             return View(sellerOrders);
+        }
+
+
+        public async Task<ActionResult> ChangeOrderItemStatus(int orderId)
+        {
+            if (Session["JWTToken"] == null || string.IsNullOrEmpty(Session["JWTToken"].ToString()))
+            {
+                return RedirectToAction("Login", "User"); 
+            }
+
+            if (Session["Type"]?.ToString() != "Seller")
+            {
+                return RedirectToAction("Unauthorized", "Home"); 
+            }
+            
+            var orderItem = await _context.OrderItems
+                .Include(oi => oi.Order) // Include Order details
+                .Include(oi => oi.Product) // Include Product details
+                .FirstOrDefaultAsync(oi => oi.Id == orderId);
+
+            if (orderItem == null)
+            {
+                return HttpNotFound();
+            }
+
+            // Create and return the view model for your new view
+            var viewModel = new SellerOrderViewModel
+            {
+                OrderId = orderItem.Order.Id,
+                OrderItemId = orderId,
+                CurrentStatus = orderItem.Status.ToString(),
+                ProductName = orderItem.Product.Name,
+                Quantity = orderItem.Quantity,
+                PriceAtPurchase = orderItem.PriceAtPurchase,
+                TotalAmount = orderItem.Quantity * orderItem.PriceAtPurchase,
+                CustomerName = orderItem.Order.User.FirstName + " " + orderItem.Order.User.LastName,
+                CustomerEmail = orderItem.Order.User.Email,
+                CustomerPhoneNumber = orderItem.Order.User.PhoneNumber,
+                // Add other properties as needed
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -194,37 +240,7 @@ namespace Dealora.Controllers
 
 
 
-        public async Task<ActionResult> ChangeOrderItemStatus(int orderId)
-        {
-            // Fetch the order item along with related order and product information
-            var orderItem = await _context.OrderItems
-                .Include(oi => oi.Order) // Include Order details
-                .Include(oi => oi.Product) // Include Product details
-                .FirstOrDefaultAsync(oi => oi.Id == orderId);
-
-            if (orderItem == null)
-            {
-                return HttpNotFound();
-            }
-
-            // Create and return the view model for your new view
-            var viewModel = new SellerOrderViewModel
-            {
-                OrderId = orderItem.Order.Id,
-                OrderItemId = orderId,
-                CurrentStatus = orderItem.Status.ToString(),
-                ProductName = orderItem.Product.Name,
-                Quantity = orderItem.Quantity,
-                PriceAtPurchase = orderItem.PriceAtPurchase,
-                TotalAmount = orderItem.Quantity * orderItem.PriceAtPurchase,
-                CustomerName = orderItem.Order.User.FirstName + " " + orderItem.Order.User.LastName,
-                CustomerEmail = orderItem.Order.User.Email,
-                CustomerPhoneNumber = orderItem.Order.User.PhoneNumber,
-                // Add other properties as needed
-            };
-
-            return View(viewModel);
-        }
+        
 
     }
 }

@@ -28,46 +28,19 @@ namespace Dealora.Controllers
             this.client = new HttpClient();
         }
         // GET: Categories
-        public async Task<ActionResult> Index()
-        {
-            if (Session["JWTToken"] != null)
-            {
-                try
-                {
-                    // Set the Authorization header with the JWT token
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
-
-                    client.BaseAddress = new Uri(@"http://localhost:9570/api/");
-                    var response = await client.GetAsync("Categories");
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var data = await response.Content.ReadAsAsync<IEnumerable<Category>>();
-                        return View(data);
-                    }
-                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    {
-                        return RedirectToAction("Login", "User");
-                    }
-                    else
-                        return HttpNotFound();
-
-                }
-                catch (Exception ex)
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Error occurred while fetching data.");
-                }
-            }
-            else
-            {
-                return RedirectToAction("Login", "User");
-            }
-        }
+        
 
         // GET: Categories/Create
         public async Task<ActionResult> Create()
         {
-
+            if (Session["JWTToken"] == null || string.IsNullOrEmpty(Session["JWTToken"].ToString()))
+            {
+                return RedirectToAction("Login", "User"); // Redirect to login if not authenticated
+            }
+            if (Session["Type"]?.ToString() != "Admin")
+            {
+                return RedirectToAction("Unauthorized", "Home");
+            }
             var viewModel = new CategoryViewModel
             {
                 Categories = await _dbContext.Categories.ToListAsync(),

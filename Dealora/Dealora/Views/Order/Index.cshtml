@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<Dealora.Models.ViewModel.OrderHistoryViewModel>
+
 <div class="container mt-5">
     <div class="row">
         @Html.Partial("_Sidebar") <!-- Sidebar for navigation -->
@@ -6,28 +7,64 @@
             <div class="card">
                 <div class="card-body">
                     <h2 class="mb-4">Order History</h2>
-                    <!-- Loop through each order and display it as a card -->
-                    <div class="row">
-                        @foreach (var order in Model)
-                        {
-                            <div class="col-md-6 mb-4">
-                                <div class="card shadow-sm h-100">
-                                    <!-- Added 'h-100' to make cards equal height -->
-                                    <div class="card-body">
-                                        <h5 class="card-title">Order ID: @order.OrderId</h5>
-                                        <p class="card-text">
-                                            <strong>Order Date:</strong> @order.OrderDate.ToShortDateString() <br />
-                                            <strong>Total Amount:</strong> $@order.TotalAmount <br />
-                                            <strong>Status:</strong> @order.Status
-                                        </p>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            @Html.ActionLink("Show Details", "Details", new { id = order.OrderId }, new { @class = "btn btn-primary" })
+
+                    @if (!Model.Any())
+                    {
+                        <!-- Message if no orders exist -->
+                        <div class="alert alert-info" role="alert">
+                            You have no orders in your history.
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Loop through each order and display it as a card -->
+                        <div class="row">
+                            @foreach (var order in Model)
+                            {
+                                <div class="col-md-6 mb-4">
+                                    <div class="card shadow-sm h-100">
+                                        <!-- Added 'h-100' to make cards equal height -->
+                                        <div class="card-body">
+                                            <h5 class="card-title">Order ID: @order.OrderId</h5>
+                                            <p class="card-text">
+                                                <strong>Order Date:</strong> @order.OrderDate.ToShortDateString() <br />
+                                                <strong>Total Amount:</strong> $@order.TotalAmount <br />
+                                                <strong>Status:</strong>
+                                                @{
+                                                    string statusClass = "badge badge-secondary"; // Default class
+                                                    string statusText = order.Status; // To display status text
+                                                    if (order.Status == "Pending")
+                                                    {
+                                                        statusClass = "badge rounded-pill bg-light";
+                                                    }
+                                                    else if (order.Status == "Confirmed")
+                                                    {
+                                                        statusClass = "badge rounded-pill bg-info";
+                                                    }
+                                                    else if (order.Status == "Shipped")
+                                                    {
+                                                        statusClass = "badge rounded-pill bg-warning";
+                                                    }
+                                                    else if (order.Status == "Delivered")
+                                                    {
+                                                        statusClass = "badge rounded-pill bg-success";
+                                                    }
+                                                    else if (order.Status == "Cancelled")
+                                                    {
+                                                        statusClass = "badge rounded-pill bg-danger";
+                                                    }
+                                                }
+                                                <span class="@statusClass">@statusText</span>
+                                            </p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                @Html.ActionLink("Show Details", "Details", new { id = order.OrderId }, new { @class = "btn btn-primary" })
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        }
-                    </div>
+                            }
+                        </div>
+                    }
                 </div>
             </div>
         </div>

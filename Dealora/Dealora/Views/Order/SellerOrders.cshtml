@@ -1,46 +1,82 @@
 ﻿@model IEnumerable<Dealora.Models.ViewModel.SellerOrderViewModel>
 @using Dealora.Models
-@{
-    ViewBag.Title = "Your Orders";
-}
 
 <div class="container mt-5">
-    <h2>Your Orders</h2>
     <div class="row">
-        @if (!Model.Any())
-        {
-            <div class="col-md-12">
-                <div class="alert alert-info">
-                    No orders found.
-                </div>
-            </div>
-        }
-        else
-        {
-            foreach (var order in Model)
-            {
-                <div class="col-md-6 mb-4">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Order ID: @order.OrderId</h5>
-                            <h5 class="card-title">Current Status: @order.CurrentStatus</h5>
-                            <p class="card-text">
-                                <strong>Order Date:</strong> @order.OrderDate.ToShortDateString() <br />
-                                <strong>Product Name:</strong> @order.ProductName <br />
-                                <strong>Quantity:</strong> @order.Quantity <br />
-                                <strong>Price at Purchase:</strong> $@order.PriceAtPurchase.ToString("F2") <br />
-                                <strong>Total Amount:</strong> $@order.TotalAmount.ToString("F2") <br />
-                                <strong>Customer Name:</strong> @order.CustomerName <br />
-                                <strong>Customer Email:</strong> @order.CustomerEmail <br />
-                                <strong>Customer Phone:</strong> @order.CustomerPhoneNumber
-                            </p>
+        <!-- Sidebar -->
+        @Html.Partial("_Sidebar")
 
-                            <!-- Button to go to Change Order Item Status page -->
-                            @Html.ActionLink("Go to Change Item Status", "ChangeOrderItemStatus", "Order", new { orderId = order.OrderItemId }, new { @class = "btn btn-secondary mb-2", @role = "button" })
+        <!-- Main content area -->
+        <div class="col-md-9">
+            <div class="card shadow-sm p-4">
+                <div class="row">
+                    <!-- Orders Section -->
+                    <div class="col-md-12">
+                        <h4 class="mb-4">Your Orders</h4>
+                        <div class="order-list">
+                            @if (!Model.Any())
+                            {
+                                <div class="alert alert-info">
+                                    No orders found.
+                                </div>
+                            }
+                            else
+                            {
+                                foreach (var order in Model)
+                                {
+                                    <div class="card text-dark mb-3 shadow-sm" style="max-width: 22rem; background-color: #f8f9fa; border-radius: 10px;">
+                                        <div class="card-header bg-primary text-white" style="border-radius: 10px 10px 0 0;">
+                                            <h5 class="mb-0">Order ID: @order.OrderId</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">Current Status: <span class="badge bg-success">@order.CurrentStatus</span></h5>
+                                            <p class="card-text">
+                                                <strong>Order Date:</strong> @order.OrderDate.ToShortDateString() <br />
+                                                <strong>Product Name:</strong> @order.ProductName <br />
+                                                <strong>Quantity:</strong> @order.Quantity <br />
+                                                <strong>Price at Purchase:</strong> $@order.PriceAtPurchase.ToString("F2") <br />
+                                                <strong>Total Amount:</strong> $@order.TotalAmount.ToString("F2") <br />
+                                                <strong>Customer Name:</strong> @order.CustomerName <br />
+                                                <strong>Customer Email:</strong> @order.CustomerEmail <br />
+                                                <strong>Customer Phone:</strong> @order.CustomerPhoneNumber
+                                            </p>
+
+                                            <!-- Button to change item status -->
+                                            @Html.ActionLink("Go to Change Item Status", "ChangeOrderItemStatus", "Order", new { orderId = order.OrderItemId }, new { @class = "btn btn-secondary w-100", @role = "button" })
+                                        </div>
+                                    </div>
+                                }
+                            }
                         </div>
                     </div>
                 </div>
-            }
-        }
+            </div>
+        </div>
     </div>
 </div>
+
+<style>
+    .order-list .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .order-list .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+    .card-header {
+        font-size: 1.25rem;
+        font-weight: bold;
+        padding: 10px 15px;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .card-body {
+        padding: 15px;
+    }
+</style>
