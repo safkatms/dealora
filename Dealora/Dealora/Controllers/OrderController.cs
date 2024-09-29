@@ -69,7 +69,7 @@ namespace Dealora.Controllers
 
             var userId = Session["UserId"] != null ? (int)Session["UserId"] : 0;
 
-            
+
 
             // Retrieve the order details for the specific order
             var order = await _context.Orders
@@ -125,6 +125,7 @@ namespace Dealora.Controllers
                 .Select(oi => new SellerOrderViewModel
                 {
                     OrderId = oi.OrderId,
+                    OrderItemId = oi.Id,
                     OrderDate = oi.Order.OrderDate,
                     ProductName = oi.Product.Name,
                     Quantity = oi.Quantity,
@@ -132,29 +133,19 @@ namespace Dealora.Controllers
                     TotalAmount = oi.Quantity * oi.PriceAtPurchase, // Calculate total for the item
                     CustomerName = oi.Order.User.FirstName + " " + oi.Order.User.LastName, // Concatenate first and last name
                     CustomerEmail = oi.Order.User.Email,
-                    CurrentStatus = oi.Status.ToString(), // Use oi.Status instead of oi.Order.Status
+                    CurrentStatus = oi.Order.Status.ToString(), // Use oi.Status instead of oi.Order.Status
                     CustomerPhoneNumber = oi.Order.User.PhoneNumber
                 })
                 .ToListAsync();
 
-            // Populate ViewBag with OrderStatus enum values
-            ViewBag.Statuses = new SelectList(Enum.GetValues(typeof(OrderStatus)).Cast<OrderStatus>().Select(e => new
-            {
-                Value = e.ToString(),
-                Text = e.ToString() // Customize this if you want different display names
-            }), "Value", "Text");
-
             return View(sellerOrders);
         }
 
-
-
         [HttpPost]
-        public async Task<ActionResult> UpdateOrderItemStatus(int orderItemId, string newStatus)
+        public async Task<ActionResult> UpdateOrderItemStatus(int orderItemId, OrderItemStatus newStatus)
         {
-            // Get the order item from the database
+            // Fetch the order item by ID
             var orderItem = await _context.OrderItems
-                .Include(oi => oi.Order) // Include the Order details
                 .FirstOrDefaultAsync(oi => oi.Id == orderItemId);
 
             if (orderItem == null)
@@ -162,60 +153,78 @@ namespace Dealora.Controllers
                 return HttpNotFound();
             }
 
-            // Convert the new status string to OrderItemStatus enum
-            if (Enum.TryParse<OrderItemStatus>(newStatus, out var orderItemStatus))
+            // Update the order item's status
+            orderItem.Status = newStatus;
+
+            // Save the change to the order item
+            await _context.SaveChangesAsync();
+
+            // Get the associated Order ID
+            var orderId = orderItem.OrderId;
+
+            // Fetch all OrderItems associated with the same OrderId
+            var allOrderItems = await _context.OrderItems
+                .Where(oi => oi.OrderId == orderId)
+                .ToListAsync();
+
+            // Check if all OrderItems have the same status
+            bool allStatusesSame = allOrderItems.All(oi => oi.Status == newStatus);
+
+            if (allStatusesSame)
             {
-                // Update the order item's status
-                orderItem.Status = orderItemStatus;
-                _context.Entry(orderItem).State = EntityState.Modified;
+                // Fetch the order from the Orders table
+                var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
 
-                // Check if all order items in the order have the same status
-                var allOrderItems = await _context.OrderItems
-                    .Where(oi => oi.OrderId == orderItem.OrderId)
-                    .ToListAsync();
-
-                // Check if all order items have the same status
-                if (allOrderItems.All(oi => oi.Status == orderItemStatus))
+                if (order != null)
                 {
-                    
+                    // Update the status of the order
+                    order.Status = (OrderStatus)newStatus;
 
-                    // Here we assume the logic is that if all order items are delivered, the order is delivered.
-                    OrderStatus orderStatus = OrderStatus.Pending; // Default case
-                    if (orderItemStatus == OrderItemStatus.Pending)
-                    {
-                        orderStatus = OrderStatus.Pending;
-                    }
-                    else if (orderItemStatus == OrderItemStatus.Shipped)
-                    {
-                        orderStatus = OrderStatus.Shipped;
-                    }
-                    else if (orderItemStatus == OrderItemStatus.Delivered)
-                    {
-                        orderStatus = OrderStatus.Delivered;
-                    }
-                    else if (orderItemStatus == OrderItemStatus.Cancelled)
-                    {
-                        orderStatus = OrderStatus.Cancelled;
-                    }
-
-                    // Update the order status
-                    orderItem.Order.Status = orderStatus; // Set the Order status
-                    _context.Entry(orderItem.Order).State = EntityState.Modified; // Mark the order as modified
+                    // Save the change to the order
+                    await _context.SaveChangesAsync();
                 }
-
-                // Save changes to the database
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction("SellerOrders"); // Redirect to the seller orders page
             }
-            else
-            {
-                // Handle invalid status case (optional)
-                ModelState.AddModelError("", "Invalid order status.");
-                return RedirectToAction("SellerOrders");
-            }
+
+            // Redirect back to the orders page with a success message
+            TempData["SuccessMessage"] = "Order item status updated successfully.";
+            return RedirectToAction("SellerOrders", "Order");
         }
 
+
+
+
+
+        public async Task<ActionResult> ChangeOrderItemStatus(int orderId)
+        {
+            // Fetch the order item along with related order and product information
+            var orderItem = await _context.OrderItems
+                .Include(oi => oi.Order) // Include Order details
+                .Include(oi => oi.Product) // Include Product details
+                .FirstOrDefaultAsync(oi => oi.Id == orderId);
+
+            if (orderItem == null)
+            {
+                return HttpNotFound();
+            }
+
+            // Create and return the view model for your new view
+            var viewModel = new SellerOrderViewModel
+            {
+                OrderId = orderItem.Order.Id,
+                OrderItemId = orderId,
+                CurrentStatus = orderItem.Status.ToString(),
+                ProductName = orderItem.Product.Name,
+                Quantity = orderItem.Quantity,
+                PriceAtPurchase = orderItem.PriceAtPurchase,
+                TotalAmount = orderItem.Quantity * orderItem.PriceAtPurchase,
+                CustomerName = orderItem.Order.User.FirstName + " " + orderItem.Order.User.LastName,
+                CustomerEmail = orderItem.Order.User.Email,
+                CustomerPhoneNumber = orderItem.Order.User.PhoneNumber,
+                // Add other properties as needed
+            };
+
+            return View(viewModel);
+        }
 
     }
 }

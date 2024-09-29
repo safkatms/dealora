@@ -1,0 +1,37 @@
+﻿@model Dealora.Models.ViewModel.SellerOrderViewModel
+@using Dealora.Models
+@{
+    ViewBag.Title = "Change Order Item Status";
+}
+
+<div class="container mt-5">
+    <h2>Change Status for Order ID: @Model.OrderId</h2>
+
+    <div class="mb-4">
+        <strong>Product Name:</strong> @Model.ProductName <br />
+        <strong>Current Status:</strong> @Model.CurrentStatus <br />
+        <strong>Quantity:</strong> @Model.Quantity <br />
+        <strong>Price at Purchase:</strong> $@Model.PriceAtPurchase.ToString("F2") <br />
+        <strong>Total Amount:</strong> $@Model.TotalAmount.ToString("F2") <br />
+        <strong>Customer Name:</strong> @Model.CustomerName <br />
+        <strong>Customer Email:</strong> @Model.CustomerEmail <br />
+        <strong>Customer Phone:</strong> @Model.CustomerPhoneNumber <br />
+    </div>
+
+    <h4>Change Status:</h4>
+    @using (Html.BeginForm("UpdateOrderItemStatus", "Order", FormMethod.Post))
+    {
+        @Html.Hidden("orderItemId", Model.OrderItemId)
+
+<div class="form-group">
+    <label for="newStatus">Select New Status:</label>
+    @Html.DropDownListFor(x => x.NewStatus, new SelectList(Enum.GetValues(typeof(Dealora.Models.OrderItemStatus))), "--Select--", new { @class = "form-control" })
+    @Html.ValidationMessage("Role", "", new { @class = "text-danger" })
+</div>
+
+        <button type="submit" class="btn btn-primary">Update Status</button>
+    }
+
+    <br /><br />
+    <a href="@Url.Action("SellerOrders", "Order")" class="btn btn-secondary">Back to Orders</a>
+</div>

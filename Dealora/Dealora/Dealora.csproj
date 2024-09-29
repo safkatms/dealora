@@ -715,15 +715,13 @@
     <Content Include="Views\Home\ProductsByCategory.cshtml" />
     <Content Include="Views\ShoppingCart\Index.cshtml" />
     <Content Include="Views\Product\SellerOrders.cshtml" />
-
     <Content Include="Views\Product\SellerDashboard.cshtml" />
-
     <Content Include="Views\ShoppingCart\Checkout.cshtml" />
     <Content Include="Views\ShoppingCart\OrderConfirmation.cshtml" />
     <Content Include="Views\Order\Index.cshtml" />
     <Content Include="Views\Order\Details.cshtml" />
     <Content Include="Views\Order\SellerOrders.cshtml" />
-
+    <Content Include="Views\Order\ChangeOrderItemStatus.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

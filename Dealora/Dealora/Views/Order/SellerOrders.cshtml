@@ -1,44 +1,46 @@
 ﻿@model IEnumerable<Dealora.Models.ViewModel.SellerOrderViewModel>
 @using Dealora.Models
+@{
+    ViewBag.Title = "Your Orders";
+}
+
 <div class="container mt-5">
     <h2>Your Orders</h2>
     <div class="row">
-        @foreach (var order in Model)
+        @if (!Model.Any())
         {
-            <div class="col-md-6 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Order ID: @order.OrderId</h5>
-                        <h5 class="card-title">Order ID: @order.CurrentStatus</h5>
-                        <p class="card-text">
-                            <strong>Order Date:</strong> @order.OrderDate.ToShortDateString() <br />
-                            <strong>Product Name:</strong> @order.ProductName <br />
-                            <strong>Quantity:</strong> @order.Quantity <br />
-                            <strong>Price at Purchase:</strong> $@order.PriceAtPurchase <br />
-                            <strong>Total Amount:</strong> $@order.TotalAmount <br />
-                            <strong>Customer Name:</strong> @order.CustomerName <br />
-                            <strong>Customer Email:</strong> @order.CustomerEmail <br />
-                            <strong>Customer Phone:</strong> @order.CustomerPhoneNumber
-                        </p>
-                        <!-- Form to change order item status -->
-                        @using (Html.BeginForm("UpdateOrderItemStatus", "Order", FormMethod.Post))
-                        {
-                            @Html.Hidden("orderItemId", order.OrderId)
-
-                            <div class="form-group">
-                                <label for="newStatus">Change Status:</label>
-                                <select name="status" class="form-control">
-                                    @foreach (var status in Enum.GetValues(typeof(Dealora.Models.OrderStatus)))
-                                    {
-                                        <option value="@status" @(status.Equals(order.CurrentStatus) ? "selected" : "")>@status</option>
-                                    }
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Update Status</button>
-                        }
-                    </div>
+            <div class="col-md-12">
+                <div class="alert alert-info">
+                    No orders found.
                 </div>
             </div>
+        }
+        else
+        {
+            foreach (var order in Model)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Order ID: @order.OrderId</h5>
+                            <h5 class="card-title">Current Status: @order.CurrentStatus</h5>
+                            <p class="card-text">
+                                <strong>Order Date:</strong> @order.OrderDate.ToShortDateString() <br />
+                                <strong>Product Name:</strong> @order.ProductName <br />
+                                <strong>Quantity:</strong> @order.Quantity <br />
+                                <strong>Price at Purchase:</strong> $@order.PriceAtPurchase.ToString("F2") <br />
+                                <strong>Total Amount:</strong> $@order.TotalAmount.ToString("F2") <br />
+                                <strong>Customer Name:</strong> @order.CustomerName <br />
+                                <strong>Customer Email:</strong> @order.CustomerEmail <br />
+                                <strong>Customer Phone:</strong> @order.CustomerPhoneNumber
+                            </p>
+
+                            <!-- Button to go to Change Order Item Status page -->
+                            @Html.ActionLink("Go to Change Item Status", "ChangeOrderItemStatus", "Order", new { orderId = order.OrderItemId }, new { @class = "btn btn-secondary mb-2", @role = "button" })
+                        </div>
+                    </div>
+                </div>
+            }
         }
     </div>
 </div>
