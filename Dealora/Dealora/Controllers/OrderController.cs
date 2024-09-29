@@ -199,6 +199,9 @@ namespace Dealora.Controllers
                 return HttpNotFound();
             }
 
+            // Get the associated Product ID
+            var productId = orderItem.ProductId; // Ensure this property exists in your OrderItem model
+
             // Update the order item's status
             orderItem.Status = newStatus;
 
@@ -223,24 +226,29 @@ namespace Dealora.Controllers
 
                 if (order != null)
                 {
-                    // Update the status of the order
+                    
                     order.Status = (OrderStatus)newStatus;
 
-                    // Save the change to the order
+                    
+                    if (newStatus == OrderItemStatus.Cancelled)
+                    {
+                        var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == productId);
+
+                        if (product != null)
+                        {
+                            product.StockQuantity += orderItem.Quantity; 
+                        }
+                    }
+
+                   
                     await _context.SaveChangesAsync();
                 }
             }
 
-            // Redirect back to the orders page with a success message
+            
             TempData["SuccessMessage"] = "Order item status updated successfully.";
             return RedirectToAction("SellerOrders", "Order");
         }
-
-
-
-
-
-        
 
     }
 }
