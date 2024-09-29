@@ -1,61 +1,79 @@
 ﻿@model Dealora.Models.Product
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Product Details";
 }
 
-<h2>Product Details</h2>
-
-<div class="container">
-    <hr />
+<div class="container mt-5">
     <div class="row">
-        <div class="col-md-6">
-            <strong>@Html.DisplayNameFor(model => model.Category.Name):</strong>
-            @Html.DisplayFor(model => model.Category.Name)
-        </div>
+        @Html.Partial("_Sidebar") <!-- Sidebar inclusion -->
 
-        <div class="col-md-6">
-            <strong>@Html.DisplayNameFor(model => model.User.FirstName):</strong>
-            @Html.DisplayFor(model => model.User.FirstName)
-        </div>
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">Product Details</h2>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <strong>Category:</strong>
+                            @Html.DisplayFor(model => model.Category.Name)
+                        </div>
 
-        <div class="col-md-6">
-            <strong>@Html.DisplayNameFor(model => model.Name):</strong>
-            @Html.DisplayFor(model => model.Name)
-        </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>User:</strong>
+                            @Html.DisplayFor(model => model.User.FirstName)
+                        </div>
 
-        <div class="col-md-6">
-            <strong>@Html.DisplayNameFor(model => model.Description):</strong>
-            @Html.DisplayFor(model => model.Description)
-        </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>Product Name:</strong>
+                            @Html.DisplayFor(model => model.Name)
+                        </div>
 
-        <div class="col-md-6">
-            <strong>@Html.DisplayNameFor(model => model.Price):</strong>
-            @Html.DisplayFor(model => model.Price)
-        </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>Description:</strong>
+                            @Html.DisplayFor(model => model.Description)
+                        </div>
 
-        <div class="col-md-6">
-            <strong>@Html.DisplayNameFor(model => model.StockQuantity):</strong>
-            @Html.DisplayFor(model => model.StockQuantity)
-        </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>Price:</strong>
+                            @Html.DisplayFor(model => model.Price)
+                        </div>
 
-        <div class="col-md-6">
-            <strong>@Html.DisplayNameFor(model => model.ImageUrl):</strong>
-            @Html.DisplayFor(model => model.ImageUrl)
-        </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>Stock Quantity:</strong>
+                            @Html.DisplayFor(model => model.StockQuantity)
+                        </div>
 
-        <div class="col-md-6">
-            <strong>@Html.DisplayNameFor(model => model.DateAdded):</strong>
-            @Html.DisplayFor(model => model.DateAdded)
-        </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>Image:</strong>
+                            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                            {
+                                <img src="@Url.Content(Model.ImageUrl)" alt="Product Image" class="img-thumbnail" style="max-width: 200px;" />
+                            }
+                            else
+                            {
+                                <p>No image available</p>
+                            }
+                        </div>
 
-        <div class="col-md-6">
-            <strong>@Html.DisplayNameFor(model => model.IsActive):</strong>
-            @Html.DisplayFor(model => model.IsActive)
+                        <div class="col-md-6 mb-3">
+                            <strong>Date Added:</strong>
+                            @Html.DisplayFor(model => model.DateAdded)
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <strong>Active:</strong>
+                            @Html.DisplayFor(model => model.IsActive)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <p>
+                        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-warning" })
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<br />
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-warning" })
-</p>

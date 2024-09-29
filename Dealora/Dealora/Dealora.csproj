@@ -708,6 +708,7 @@
     <Content Include="Views\Home\ProductsByCategory.cshtml" />
     <Content Include="Views\ShoppingCart\Index.cshtml" />
     <Content Include="Views\Product\SellerOrders.cshtml" />
+    <Content Include="Views\Product\SellerDashboard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

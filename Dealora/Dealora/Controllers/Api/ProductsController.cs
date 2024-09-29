@@ -149,28 +149,6 @@ namespace Dealora.Controllers.API
             return Ok(existingProduct);
         }
 
-
-        /*//showw all product order details
-        [HttpGet]
-        [Route("api/seller/{userId}")]
-        public IEnumerable<Order> GetOrdersBySeller(int userId)
-        {
-            // Get the products that belong to the seller
-            var products = _dbContext.Products.Where(p => p.UserId == userId).Select(p => p.Id).ToList();
-
-            // Get the orders for those products
-            var orderItems = _dbContext.OrderItems
-                .Where(oi => products.Contains(oi.ProductId))
-                .Select(oi => oi.OrderId)
-                .Distinct()
-                .ToList();
-
-            var orders = _dbContext.Orders.Where(o => orderItems.Contains(o.Id)).ToList();
-
-            return orders;  
-        }*/
-
-
         [HttpGet]
         [Route("api/seller/orders/{userId}")]
         public IEnumerable<OrderDeatilsViewModel> GetOrdersBySeller(int userId)
@@ -199,11 +177,36 @@ namespace Dealora.Controllers.API
                 Order = order,
                 OrderItems = _dbContext.OrderItems
                     .Where(oi => oi.OrderId == order.Id)
-                    .ToList() // Get the associated order items for this order
+                    .ToList() // Get associated order items for theorder
             }).ToList();
 
-            return orderDetailsList;  // Return the list of order details view models
+            return orderDetailsList; 
         }
+
+        // GET: api/seller/dashboard/{userId}
+        [HttpGet]
+        [Route("api/seller/dashboard/{userId}")]
+        public IHttpActionResult GetSellerDashboard(int userId)
+        {
+            // seller prdct
+            var products = _dbContext.Products
+                .Where(p => p.UserId == userId)
+                .ToList();
+
+            // Group products by category and get the count
+            var dashboardData = products
+                .GroupBy(p => p.CategoryId)
+                .Select(g => new
+                {
+                    CategoryId = g.Key,
+                    ProductCount = g.Count(),
+                    CategoryName = _dbContext.Categories.FirstOrDefault(c => c.Id == g.Key)?.Name 
+                })
+                .ToList();
+
+            return Ok(dashboardData);
+        }
+
 
 
     }

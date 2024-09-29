@@ -4,7 +4,6 @@
     ViewBag.Title = "Index";
 }
 
-
 <script>
     setTimeout(() => {
         const box = document.getElementById('hide');
@@ -12,112 +11,85 @@
     }, 5000)
 </script>
 
+<div class="container mt-5">
+    <div class="row">
+        @Html.Partial("_Sidebar") <!-- Including Sidebar -->
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-body">
+                    <h2>Product Informations</h2>
+                    <hr />
+                    <p>
+                        @Html.ActionLink("Create New Product", "Create", null, new { @class = "btn btn-success" })
+                    </p>
 
-<h2>Product Informations</h2>
-<hr />
-<p>
-    @Html.ActionLink("Create New Product", "Create", null, new { @class = "btn btn-success" })
-</p>
+                    @if (TempData["msgAdd"] != null)
+                    {
+                        <div id="hide" class="alert alert-success">
+                            <strong>Good work !! </strong> @TempData["msgAdd"]
+                        </div>
+                    }
 
-@if (TempData["msgAdd"] != null)
-{
-    <div id="hide" , class="alert alert-success">
-        <strong>Good work !! </strong> @TempData["msgAdd"]
+                    <table class="table table-hover table-bordered table-sm" id="ProductTable">
+                        <!-- Added 'table-sm' for compact spacing -->
+                        <thead class="table-info">
+                            <tr>
+                                <th scope="col" class="small p-1">Category</th> 
+                                <th scope="col" class="small p-1">User</th>
+                                <th scope="col" class="small p-1">Product Name</th>
+                                <th scope="col" class="small p-1">Description</th>
+                                <th scope="col" class="small p-1">Price</th>
+                                <th scope="col" class="small p-1">Quantity</th>
+                                <th scope="col" class="small p-1">Image</th>
+                                <th scope="col" class="small p-1">Date Added</th>
+                                <th scope="col" class="small p-1">Active</th>
+                                <th scope="col" class="small p-1">Options</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr class="table-secondary small p-1">
+                                    <td>@Html.DisplayFor(modelItem => item.Category.Name)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.User.FirstName)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Price)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.StockQuantity)</td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                        {
+                                            <img src="@Url.Content(item.ImageUrl)" alt="Product Image" style="width: 40px; height: auto;" />
+                                        }
+                                        else
+                                        {
+                                            <p>Unavailable</p>
+                                        }
+                                    </td>
+                                    <td>@Html.DisplayFor(modelItem => item.DateAdded)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.IsActive)</td>
+                                    <td>
+                                        <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-warning btn-sm p-1" title="Edit" style="width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-info btn-sm p-1" title="Details" style="width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;">
+                                            <i class="bi bi-info-circle"></i>
+                                        </a>
+                                        <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-danger btn-sm p-1" title="Delete" style="width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>
+        </div>
     </div>
-}
-
-<table class="table table-hover table-bordered" id="ProductTable">
-    <thead class="table-info">
-        <tr>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.Category.Name)
-            </th>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.User.FirstName)
-            </th>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.StockQuantity)
-            </th>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.ImageUrl)
-            </th>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.DateAdded)
-            </th>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.IsActive)
-            </th>
-            <th scope="col">Options</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr class="table-secondary">
-                <td>
-                    @Html.DisplayFor(modelItem => item.Category.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.User.FirstName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Price)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StockQuantity)
-                </td>
-                <td>
-                    @if (!string.IsNullOrEmpty(item.ImageUrl))
-                    {
-                        <img src="@Url.Content(item.ImageUrl)" alt="Product Image" style="width: 50px; height: auto;" />
-                    }
-                    else
-                    {
-                        <p>No image available</p>
-                    }
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DateAdded)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.IsActive)
-                </td>
-                <td>
-                    <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-warning btn-sm p-1" title="Edit" style="width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; ">
-                        <i class="bi bi-pencil"></i>
-                    </a>
-
-                    <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-info btn-sm p-1" title="Details" style="width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; ">
-                        <i class="bi bi-info-circle"></i>
-                    </a>
-
-                    <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-danger btn-sm p-1" title="Delete" style="width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; ">
-                        <i class="bi bi-trash"></i>
-                    </a>
-                </td>
-
-
-            </tr>
-        }
-    </tbody>
-
-</table>
-
+</div>
 
 @section scripts {
     <!-- jQuery and DataTables -->
@@ -126,7 +98,6 @@
     <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
-
 
     <script>
         $(document).ready(function () {
@@ -140,9 +111,9 @@
             });
 
             // Style the search box
-            $('#UsersTable_filter input')
+            $('#ProductTable_filter input')
                 .addClass('form-control') // Add Bootstrap styling
-                .attr('placeholder', 'Search users...') // Add custom placeholder
+                .attr('placeholder', 'Search products...') // Add custom placeholder
                 .css({
                     'width': '300px',
                     'display': 'inline-block',
@@ -150,7 +121,7 @@
                 });
 
             // Optionally, adjust the table wrapper for a cleaner look
-            $('#UsersTable_wrapper .top').css({
+            $('#ProductTable_wrapper .top').css({
                 'display': 'flex',
                 'justify-content': 'flex-end',
                 'margin-bottom': '10px'

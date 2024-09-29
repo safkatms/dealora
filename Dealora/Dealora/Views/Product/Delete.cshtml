@@ -11,78 +11,81 @@
     }, 10000)
 </script>
 
-<h2>Delete Product</h2>
+<div class="container mt-5">
+    <div class="row">
+        @Html.Partial("_Sidebar") <!-- Sidebar inclusion -->
 
-@*<h3>Are you sure you want to delete this?</h3>*@
-<hr />
+        <div class="col-md-9">
+            <h2>Delete Product</h2>
+            <hr />
 
-@if (TempData["msgAdd"] != null)
-{
-    <div id="hide" , class="alert alert-danger">
-        <strong>Danger !! </strong> @TempData["msgAdd"]
-    </div>
-}
-<div class="container">
-
-
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <strong>@Html.DisplayNameFor(model => model.Category.Name):</strong>
-                    <p>@Html.DisplayFor(model => model.Category.Name)</p>
+            @if (TempData["msgAdd"] != null)
+            {
+                <div id="hide" class="alert alert-danger">
+                    <strong>Danger !! </strong> @TempData["msgAdd"]
                 </div>
+            }
 
-                <div class="col-md-6">
-                    <strong>@Html.DisplayNameFor(model => model.User.FirstName):</strong>
-                    <p>@Html.DisplayFor(model => model.User.FirstName)</p>
-                </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <strong>Category:</strong>
+                            <p>@Html.DisplayFor(model => model.Category.Name)</p>
+                        </div>
 
-                <div class="col-md-6">
-                    <strong>@Html.DisplayNameFor(model => model.Name):</strong>
-                    <p>@Html.DisplayFor(model => model.Name)</p>
-                </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>User:</strong>
+                            <p>@Html.DisplayFor(model => model.User.FirstName)</p>
+                        </div>
 
-                <div class="col-md-6">
-                    <strong>@Html.DisplayNameFor(model => model.Description):</strong>
-                    <p>@Html.DisplayFor(model => model.Description)</p>
-                </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>Product Name:</strong>
+                            <p>@Html.DisplayFor(model => model.Name)</p>
+                        </div>
 
-                <div class="col-md-6">
-                    <strong>@Html.DisplayNameFor(model => model.Price):</strong>
-                    <p>@Html.DisplayFor(model => model.Price)</p>
-                </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>Description:</strong>
+                            <p>@Html.DisplayFor(model => model.Description)</p>
+                        </div>
 
-                <div class="col-md-6">
-                    <strong>@Html.DisplayNameFor(model => model.StockQuantity):</strong>
-                    <p>@Html.DisplayFor(model => model.StockQuantity)</p>
-                </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>Price:</strong>
+                            <p>@Html.DisplayFor(model => model.Price)</p>
+                        </div>
 
-                <div class="col-md-6">
-                    <strong>@Html.DisplayNameFor(model => model.ImageUrl):</strong>
-                    <p>@Html.DisplayFor(model => model.ImageUrl)</p>
-                </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>Stock Quantity:</strong>
+                            <p>@Html.DisplayFor(model => model.StockQuantity)</p>
+                        </div>
 
-                <div class="col-md-6">
-                    <strong>@Html.DisplayNameFor(model => model.DateAdded):</strong>
-                    <p>@Html.DisplayFor(model => model.DateAdded)</p>
-                </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>Image URL:</strong>
+                            <p>@Html.DisplayFor(model => model.ImageUrl)</p>
+                        </div>
 
-                <div class="col-md-6">
-                    <strong>@Html.DisplayNameFor(model => model.IsActive):</strong>
-                    <p>@Html.DisplayFor(model => model.IsActive)</p>
+                        <div class="col-md-6 mb-3">
+                            <strong>Date Added:</strong>
+                            <p>@Html.DisplayFor(model => model.DateAdded)</p>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <strong>Active:</strong>
+                            <p>@Html.DisplayFor(model => model.IsActive)</p>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-actions mt-3">
+                    <input type="submit" value="Delete" class="btn btn-danger" />
+                    <a href="@Url.Action("Index", "Product")" class="btn btn-secondary">Cancel</a>
+                </div>
+            }
         </div>
     </div>
-
-    @using (Html.BeginForm())
-    {
-        @Html.AntiForgeryToken()
-
-        <div class="form-actions mt-3">
-            <input type="submit" value="Delete" class="btn btn-danger" />
-            <a href="@Url.Action("Index", "Product")" class="btn btn-secondary">Cancel</a>
-        </div>
-    }
 </div>
