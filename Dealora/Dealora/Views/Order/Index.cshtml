@@ -1,37 +1,59 @@
-﻿@model IEnumerable<Dealora.Models.ViewModel.OrderHistoryViewModel>
+﻿@model IEnumerable<Dealora.Models.ViewModel.SellerOrderViewModel>
+@using Dealora.Models
+@{
+    ViewBag.Title = "Your Orders";
+}
 
 <div class="container mt-5">
+    <h2>Your Orders</h2>
     <div class="row">
-        @Html.Partial("_Sidebar") <!-- Sidebar for navigation -->
-        <div class="col-md-9">
-            <div class="card">
-                <div class="card-body">
-                    <h2 class="mb-4">Order History</h2>
-
-                    <!-- Loop through each order and display it as a card -->
-                    <div class="row">
-                        @foreach (var order in Model)
-                        {
-                            <div class="col-md-6 mb-4">
-                                <div class="card shadow-sm h-100">
-                                    <!-- Added 'h-100' to make cards equal height -->
-                                    <div class="card-body">
-                                        <h5 class="card-title">Order ID: @order.OrderId</h5>
-                                        <p class="card-text">
-                                            <strong>Order Date:</strong> @order.OrderDate.ToShortDateString() <br />
-                                            <strong>Total Amount:</strong> $@order.TotalAmount <br />
-                                            <strong>Status:</strong> @order.Status
-                                        </p>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            @Html.ActionLink("Show Details", "Details", new { id = order.OrderId }, new { @class = "btn btn-primary" })
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    </div>
+        @if (!Model.Any())
+        {
+            <div class="col-md-12">
+                <div class="alert alert-info">
+                    No orders found.
                 </div>
             </div>
-        </div>
+        }
+        else
+        {
+            foreach (var order in Model)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Order ID: @order.OrderId</h5>
+                            <h5 class="card-title">Current Status: @order.CurrentStatus</h5>
+                            <p class="card-text">
+                                <strong>Order Date:</strong> @order.OrderDate.ToShortDateString() <br />
+                                <strong>Product Name:</strong> @order.ProductName <br />
+                                <strong>Quantity:</strong> @order.Quantity <br />
+                                <strong>Price at Purchase:</strong> $@order.PriceAtPurchase <br />
+                                <strong>Total Amount:</strong> $@order.TotalAmount <br />
+                                <strong>Customer Name:</strong> @order.CustomerName <br />
+                                <strong>Customer Email:</strong> @order.CustomerEmail <br />
+                                <strong>Customer Phone:</strong> @order.CustomerPhoneNumber
+                            </p>
+                            <!-- Form to change order item status -->
+                            @using (Html.BeginForm("UpdateOrderItemStatus", "Order", FormMethod.Post))
+                            {
+                                @Html.Hidden("orderItemId", order.OrderId)
+
+                                <div class="form-group">
+                                    <label for="newStatus">Change Status:</label>
+                                    <select name="newStatus" class="form-control">
+                                        @foreach (var status in ViewBag.Statuses)
+                                        {
+                                            <option value="@status.Value" @(status.Value.Equals(order.CurrentStatus) ? "selected" : "")>@status.Text</option>
+                                        }
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update Status</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
     </div>
 </div>
