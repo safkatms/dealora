@@ -714,7 +714,6 @@
     <Content Include="Views\Addresse\Index.cshtml" />
     <Content Include="Views\Home\ProductsByCategory.cshtml" />
     <Content Include="Views\ShoppingCart\Index.cshtml" />
-    <Content Include="Views\Product\SellerOrders.cshtml" />
     <Content Include="Views\Product\SellerDashboard.cshtml" />
     <Content Include="Views\ShoppingCart\Checkout.cshtml" />
     <Content Include="Views\ShoppingCart\OrderConfirmation.cshtml" />

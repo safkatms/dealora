@@ -149,40 +149,6 @@ namespace Dealora.Controllers.API
             return Ok(existingProduct);
         }
 
-        [HttpGet]
-        [Route("api/seller/orders/{userId}")]
-        public IEnumerable<OrderDeatilsViewModel> GetOrdersBySeller(int userId)
-        {
-            // Get the products that belong to the seller
-            var productIds = _dbContext.Products
-                .Where(p => p.UserId == userId)
-                .Select(p => p.Id)
-                .ToList();
-
-            // Get the order IDs for those products
-            var orderIds = _dbContext.OrderItems
-                .Where(oi => productIds.Contains(oi.ProductId))
-                .Select(oi => oi.OrderId)
-                .Distinct()
-                .ToList();
-
-            // Retrieve the orders that match those IDs, including order items
-            var orders = _dbContext.Orders
-                .Where(o => orderIds.Contains(o.Id))
-                .ToList();
-
-            // Create a list of OrderDetailsViewModel
-            var orderDetailsList = orders.Select(order => new OrderDeatilsViewModel
-            {
-                Order = order,
-                OrderItems = _dbContext.OrderItems
-                    .Where(oi => oi.OrderId == order.Id)
-                    .ToList() // Get associated order items for theorder
-            }).ToList();
-
-            return orderDetailsList; 
-        }
-
         // GET: api/seller/dashboard/{userId}
         [HttpGet]
         [Route("api/seller/dashboard/{userId}")]
@@ -193,7 +159,7 @@ namespace Dealora.Controllers.API
                 .Where(p => p.UserId == userId)
                 .ToList();
 
-            // Group products by category and get the count
+            // Group products by category + count
             var dashboardData = products
                 .GroupBy(p => p.CategoryId)
                 .Select(g => new
