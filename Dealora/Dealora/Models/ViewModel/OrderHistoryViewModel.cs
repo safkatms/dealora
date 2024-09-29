@@ -24,6 +24,7 @@ namespace Dealora.Models.ViewModel
     public class SellerOrderViewModel
     {
         public int OrderId { get; set; }
+        public int OrderItemId { get; set; }
         public DateTime OrderDate { get; set; }
         public string ProductName { get; set; }
         public int Quantity { get; set; }
