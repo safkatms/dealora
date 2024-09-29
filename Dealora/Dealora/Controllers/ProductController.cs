@@ -214,18 +214,15 @@ namespace Dealora.Controllers
                 {
                     return RedirectToAction("Unauthorized", "Home");
                 }
-                // Set the Authorization header with the JWT token
+
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
+                client.BaseAddress = new Uri(@"http://localhost:9570/api/");
 
                 // Fetch product for view
-                client.BaseAddress = new Uri(@"http://localhost:9570/api/");
                 var productResponse = await client.GetAsync("products/" + id.ToString());
-
                 if (productResponse.IsSuccessStatusCode)
                 {
-                    // Read single product
                     var product = await productResponse.Content.ReadAsAsync<Product>();
-
                     if (product == null)
                     {
                         return HttpNotFound();
@@ -233,11 +230,10 @@ namespace Dealora.Controllers
 
                     // Fetch categories through API
                     var response = await client.GetAsync("categories");
-
                     if (response.IsSuccessStatusCode)
                     {
                         var categories = await response.Content.ReadAsAsync<IEnumerable<Category>>();
-
+                        
                         ViewBag.CategoryId = new SelectList(categories, "Id", "Name", product.CategoryId);
                     }
                     else
@@ -260,6 +256,7 @@ namespace Dealora.Controllers
                 return RedirectToAction("Login", "User");
             }
         }
+
 
         // POST: Product/Edit/5
         [HttpPost]
@@ -405,6 +402,45 @@ namespace Dealora.Controllers
         }
 
 
+        public async Task<ActionResult> SellerDashboard()
+        {
+            if (Session["JWTToken"] != null)
+            {
+                try
+                {
+                    // Set the Authorization header with the JWT token
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
+
+                    int userId = (int)Session["UserId"];
+
+                    // Call the API to get the seller's dashboard data
+                    client.BaseAddress = new Uri(@"http://localhost:9570/api/seller/dashboard/");
+                    var response = await client.GetAsync(userId.ToString());
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var dashboardData = await response.Content.ReadAsAsync<IEnumerable<dynamic>>(); // Use dynamic or a specific model class if you have one
+                        return View(dashboardData);
+                    }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        return RedirectToAction("Unauthorized", "Home");
+                    }
+                    else
+                    {
+                        return HttpNotFound();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Error occurred while fetching data.");
+                }
+            }
+            else
+            {
+                return RedirectToAction("Login", "User");
+            }
+        }
 
 
         protected override void Dispose(bool disposing)

@@ -1,0 +1,70 @@
+﻿@model IEnumerable<dynamic>
+
+@{
+    ViewBag.Title = "Seller Dashboard";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        @Html.Partial("_Sidebar") <!-- Including Sidebar -->
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-body">
+                    <h2>Seller Dashboard</h2>
+                    <hr />
+
+                    <canvas id="productChart" width="100" height="50"></canvas> <!-- Chart Canvas -->
+
+                    <div class="row mt-4">
+                        @foreach (var item in Model)
+                        {
+                            <div class="col-md-4">
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <h5 class="card-title">@item.CategoryName</h5>
+                                        <p class="card-text">Number of Products: @item.ProductCount</p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Prepare data for the chart
+            var categories = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.CategoryName)));
+            var productCounts = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.ProductCount)));
+
+            // Create the chart
+            var ctx = document.getElementById('productChart').getContext('2d');
+            var productChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        label: 'Number of Products',
+                        data: productCounts,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+}
