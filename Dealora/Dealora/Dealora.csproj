@@ -228,6 +228,7 @@
     <Compile Include="Controllers\CategoriesController.cs" />
     <Compile Include="Controllers\DiscountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\ShoppingCartController.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -249,6 +250,10 @@
     <Compile Include="Migrations\202409281946000_AddOrderItemNavigationInOrder.cs" />
     <Compile Include="Migrations\202409281946000_AddOrderItemNavigationInOrder.Designer.cs">
       <DependentUpon>202409281946000_AddOrderItemNavigationInOrder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202409282308236_AddOrderItemStatus.cs" />
+    <Compile Include="Migrations\202409282308236_AddOrderItemStatus.Designer.cs">
+      <DependentUpon>202409282308236_AddOrderItemStatus.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Address.cs" />
@@ -272,6 +277,7 @@
     <Compile Include="Models\ViewModel\HomeViewModel.cs" />
     <Compile Include="Models\ViewModel\LoginModel.cs" />
     <Compile Include="Models\ViewModel\OrderDeatilsViewModel.cs" />
+    <Compile Include="Models\ViewModel\OrderHistoryViewModel.cs" />
     <Compile Include="Models\ViewModel\ShoppingCartViewModel.cs" />
     <Compile Include="Models\ViewModel\SignUpModel.cs" />
     <Compile Include="Models\ViewModel\UserUpdateModel.cs" />
@@ -708,12 +714,12 @@
     <Content Include="Views\Addresse\Index.cshtml" />
     <Content Include="Views\Home\ProductsByCategory.cshtml" />
     <Content Include="Views\ShoppingCart\Index.cshtml" />
-
     <Content Include="Views\Product\SellerOrders.cshtml" />
-
     <Content Include="Views\ShoppingCart\Checkout.cshtml" />
     <Content Include="Views\ShoppingCart\OrderConfirmation.cshtml" />
-
+    <Content Include="Views\Order\Index.cshtml" />
+    <Content Include="Views\Order\Details.cshtml" />
+    <Content Include="Views\Order\SellerOrders.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -736,6 +742,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202409281946000_AddOrderItemNavigationInOrder.resx">
       <DependentUpon>202409281946000_AddOrderItemNavigationInOrder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202409282308236_AddOrderItemStatus.resx">
+      <DependentUpon>202409282308236_AddOrderItemStatus.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

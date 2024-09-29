@@ -29,7 +29,7 @@
                             @Html.ActionLink("Address Book", "Index", "Addresse", new { area = "" }, new { @class = "nav-link" })
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">My Orders</a>
+                            @Html.ActionLink("My Orders", "Index", "Order", new { area = "" }, new { @class = "nav-link" })
                         </li>
                     }
                     else

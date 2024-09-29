@@ -4,6 +4,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Dealora.Models
 {
+    public enum OrderItemStatus
+    {
+        Pending,    // Order item is pending
+        Confirmed,  // Order item has been confirmed by the seller
+        Shipped,    // Order item has been shipped
+        Delivered,  // Order item has been delivered to the customer
+        Cancelled    // Order item has been canceled
+    }
+
     public class OrderItem
     {
         public int Id { get; set; }
@@ -24,6 +33,8 @@ namespace Dealora.Models
         [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
         public double PriceAtPurchase { get; set; }
 
+        [Required(ErrorMessage = "Status is required")]
+        public OrderItemStatus Status { get; set; } = OrderItemStatus.Pending; // Default status
         // Navigation properties
         public virtual Order Order { get; set; }
         public virtual Product Product { get; set; }
