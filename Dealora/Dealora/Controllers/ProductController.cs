@@ -233,8 +233,9 @@ namespace Dealora.Controllers
                     if (response.IsSuccessStatusCode)
                     {
                         var categories = await response.Content.ReadAsAsync<IEnumerable<Category>>();
-                        
+
                         ViewBag.CategoryId = new SelectList(categories, "Id", "Name", product.CategoryId);
+                        //Console.WriteLine(product.CategoryId);
                     }
                     else
                     {
@@ -360,48 +361,6 @@ namespace Dealora.Controllers
 
         }
 
-        public async Task<ActionResult> SellerOrders()
-        {
-            if (Session["JWTToken"] != null)
-            {
-                try
-                {
-                    // Set the Authorization header with the JWT token
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session["JWTToken"].ToString());
-
-                    int userId = (int)Session["UserId"];
-
-                    client.BaseAddress = new Uri(@"http://localhost:9570/");
-
-                    var response = await client.GetAsync($"api/seller/orders/{userId}");
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var data = await response.Content.ReadAsAsync<IEnumerable<OrderDeatilsViewModel>>();
-
-                        return View(data);
-                    }
-                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    {
-                        return RedirectToAction("Unauthorized", "Home");
-                    }
-                    else
-                    {
-                        return HttpNotFound();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Error occurred while fetching orders: " + ex.Message);
-                }
-            }
-            else
-            {
-                return RedirectToAction("Login", "User");
-            }
-        }
-
-
         public async Task<ActionResult> SellerDashboard()
         {
             if (Session["JWTToken"] != null)
@@ -419,7 +378,7 @@ namespace Dealora.Controllers
 
                     if (response.IsSuccessStatusCode)
                     {
-                        var dashboardData = await response.Content.ReadAsAsync<IEnumerable<dynamic>>(); // Use dynamic or a specific model class if you have one
+                        var dashboardData = await response.Content.ReadAsAsync<IEnumerable<dynamic>>(); // Use dynamic
                         return View(dashboardData);
                     }
                     else if (response.StatusCode == HttpStatusCode.Unauthorized)
