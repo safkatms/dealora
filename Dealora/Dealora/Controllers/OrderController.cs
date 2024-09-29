@@ -132,13 +132,13 @@ namespace Dealora.Controllers
                     TotalAmount = oi.Quantity * oi.PriceAtPurchase, // Calculate total for the item
                     CustomerName = oi.Order.User.FirstName + " " + oi.Order.User.LastName, // Concatenate first and last name
                     CustomerEmail = oi.Order.User.Email,
-                    CurrentStatus = oi.Order.Status.ToString(),
+                    CurrentStatus = oi.Status.ToString(), // Use oi.Status instead of oi.Order.Status
                     CustomerPhoneNumber = oi.Order.User.PhoneNumber
                 })
                 .ToListAsync();
 
-            // Populate ViewBag with OrderItemStatus enum values
-            ViewBag.Statuses = new SelectList(Enum.GetValues(typeof(OrderItemStatus)).Cast<OrderItemStatus>().Select(e => new
+            // Populate ViewBag with OrderStatus enum values
+            ViewBag.Statuses = new SelectList(Enum.GetValues(typeof(OrderStatus)).Cast<OrderStatus>().Select(e => new
             {
                 Value = e.ToString(),
                 Text = e.ToString() // Customize this if you want different display names
@@ -146,6 +146,7 @@ namespace Dealora.Controllers
 
             return View(sellerOrders);
         }
+
 
 
         [HttpPost]
@@ -176,27 +177,25 @@ namespace Dealora.Controllers
                 // Check if all order items have the same status
                 if (allOrderItems.All(oi => oi.Status == orderItemStatus))
                 {
-                    // Set the order status based on the order item status
-                    OrderStatus orderStatus;
+                    
 
                     // Here we assume the logic is that if all order items are delivered, the order is delivered.
-                    switch (orderItemStatus)
+                    OrderStatus orderStatus = OrderStatus.Pending; // Default case
+                    if (orderItemStatus == OrderItemStatus.Pending)
                     {
-                        case OrderItemStatus.Pending:
-                            orderStatus = OrderStatus.Pending;
-                            break;
-                        case OrderItemStatus.Shipped:
-                            orderStatus = OrderStatus.Shipped;
-                            break;
-                        case OrderItemStatus.Delivered:
-                            orderStatus = OrderStatus.Delivered;
-                            break;
-                        case OrderItemStatus.Cancelled:
-                            orderStatus = OrderStatus.Cancelled;
-                            break;
-                        default:
-                            orderStatus = OrderStatus.Pending; // Default case
-                            break;
+                        orderStatus = OrderStatus.Pending;
+                    }
+                    else if (orderItemStatus == OrderItemStatus.Shipped)
+                    {
+                        orderStatus = OrderStatus.Shipped;
+                    }
+                    else if (orderItemStatus == OrderItemStatus.Delivered)
+                    {
+                        orderStatus = OrderStatus.Delivered;
+                    }
+                    else if (orderItemStatus == OrderItemStatus.Cancelled)
+                    {
+                        orderStatus = OrderStatus.Cancelled;
                     }
 
                     // Update the order status
@@ -207,7 +206,7 @@ namespace Dealora.Controllers
                 // Save changes to the database
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("Index","Home"); // Redirect to the seller orders page or wherever appropriate
+                return RedirectToAction("SellerOrders"); // Redirect to the seller orders page
             }
             else
             {
@@ -216,8 +215,6 @@ namespace Dealora.Controllers
                 return RedirectToAction("SellerOrders");
             }
         }
-
-
 
 
     }
