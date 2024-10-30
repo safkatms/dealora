@@ -49,5 +49,5 @@ These instructions will guide you on setting up the Dealora project on your loca
 
  **Clone the repository**:
    ```bash
-   git clone https://github.com/username/Dealora.git
+   git clone https://github.com/safkatms/Dealora.git
    cd Dealora
